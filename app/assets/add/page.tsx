@@ -46,7 +46,7 @@ export default function AddAssetPage() {
 
   function handlePhotoExtracted(data: Partial<Asset>) {
     setForm((f) => ({ ...f, ...data }));
-    setMode('manual'); // Switch to manual to let user review/edit
+    setMode('manual');
   }
 
   async function save() {
@@ -72,16 +72,21 @@ export default function AddAssetPage() {
   }
 
   const cls = form.class;
+  const canSave = Boolean(form.name && form.value);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F8FAFC', paddingTop: 72, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--color-bg)', paddingTop: 72, paddingBottom: 100 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 var(--sp-md)' }}>
 
-        <div style={{ paddingTop: 12, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: 14 }}>
+        {/* Header */}
+        <div style={{ paddingTop: 12, marginBottom: 'var(--sp-lg)', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => router.back()}
+            style={{ background: 'none', border: 'none', color: 'var(--color-text-2)', cursor: 'pointer', fontSize: 14, padding: '4px 0', minHeight: 44 }}
+          >
             ← Back
           </button>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 500, color: '#0F172A', margin: 0 }}>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 500, color: 'var(--color-text-1)', margin: 0 }}>
             Add Asset
           </h1>
         </div>
@@ -92,15 +97,15 @@ export default function AddAssetPage() {
             <button onClick={() => setMode('photo')} style={bigOptionBtn}>
               <span style={{ fontSize: 28 }}>📷</span>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>Photo or Document</div>
-                <div style={{ fontSize: 13, color: '#94A3B8', marginTop: 3 }}>AI extracts all details automatically</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-1)' }}>Photo or Document</div>
+                <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 3 }}>AI extracts all details automatically</div>
               </div>
             </button>
             <button onClick={() => setMode('manual')} style={bigOptionBtn}>
               <span style={{ fontSize: 28 }}>✏️</span>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>Enter manually</div>
-                <div style={{ fontSize: 13, color: '#94A3B8', marginTop: 3 }}>Type in the details yourself</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-1)' }}>Enter manually</div>
+                <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 3 }}>Type in the details yourself</div>
               </div>
             </button>
           </div>
@@ -108,7 +113,7 @@ export default function AddAssetPage() {
 
         {/* Photo mode */}
         {mode === 'photo' && (
-          <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 20 }}>
+          <div style={{ background: 'var(--color-card)', backdropFilter: 'blur(20px)', border: '1px solid var(--color-border)', borderRadius: 'var(--r-xl)' }}>
             <AssetPhotoUpload
               onExtracted={handlePhotoExtracted}
               onCancel={() => setMode('choose')}
@@ -118,24 +123,25 @@ export default function AddAssetPage() {
 
         {/* Manual form */}
         {mode === 'manual' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
             {/* Asset class */}
             <div style={section}>
-              <div style={label}>Asset type</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <div style={fieldLabel}>Asset type</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-sm)' }}>
                 {CLASS_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => set('class', opt.value)}
                     style={{
-                      padding: '7px 13px',
-                      borderRadius: 12,
+                      padding: '0 13px', height: 36,
+                      borderRadius: 'var(--r-pill)',
                       border: '1px solid',
-                      borderColor: cls === opt.value ? '#0F172A' : 'rgba(0,0,0,0.08)',
-                      background: cls === opt.value ? '#0F172A' : 'rgba(255,255,255,0.7)',
-                      color: cls === opt.value ? '#FFF' : '#475569',
-                      fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                      borderColor: cls === opt.value ? 'var(--color-accent)' : 'var(--color-border-md)',
+                      background: cls === opt.value ? 'var(--color-accent)' : 'rgba(255,255,255,0.7)',
+                      color: cls === opt.value ? '#FFF' : 'var(--color-text-2)',
+                      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     {opt.icon} {opt.label}
@@ -146,27 +152,36 @@ export default function AddAssetPage() {
 
             {/* Name */}
             <div style={section}>
-              <div style={label}>Asset name</div>
+              <div style={fieldLabel}>Asset name</div>
               <input
-                placeholder={cls === 'real_estate' ? 'e.g. Apartment — Berlin Mitte' : cls === 'cars' ? 'e.g. Porsche 911 GT3 2023' : cls === 'watches' ? 'e.g. Rolex Daytona 116500LN' : 'e.g. MSCI World ETF'}
+                placeholder={
+                  cls === 'real_estate' ? 'e.g. Apartment — Berlin Mitte'
+                  : cls === 'cars' ? 'e.g. Porsche 911 GT3 2023'
+                  : cls === 'watches' ? 'e.g. Rolex Daytona 116500LN'
+                  : 'e.g. MSCI World ETF'
+                }
                 value={form.name ?? ''}
                 onChange={(e) => set('name', e.target.value)}
-                style={input}
+                style={inputStyle}
               />
             </div>
 
             {/* Value + Currency */}
             <div style={section}>
-              <div style={label}>Current value</div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={fieldLabel}>Current value</div>
+              <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
                 <input
                   type="number"
                   placeholder="0"
                   value={form.value ?? ''}
                   onChange={(e) => set('value', e.target.value)}
-                  style={{ ...input, flex: 1 }}
+                  style={{ ...inputStyle, flex: 1 }}
                 />
-                <select value={form.currency} onChange={(e) => set('currency', e.target.value as Currency)} style={{ ...input, width: 80, flex: 'none' }}>
+                <select
+                  value={form.currency}
+                  onChange={(e) => set('currency', e.target.value as Currency)}
+                  style={{ ...inputStyle, width: 80, flex: 'none' }}
+                >
                   {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
@@ -174,63 +189,63 @@ export default function AddAssetPage() {
 
             {/* Cost basis */}
             <div style={section}>
-              <div style={label}>Cost basis (optional)</div>
+              <div style={fieldLabel}>Cost basis (optional)</div>
               <input
                 type="number"
                 placeholder="Original purchase price"
                 value={form.costBasis ?? ''}
                 onChange={(e) => set('costBasis', e.target.value)}
-                style={input}
+                style={inputStyle}
               />
             </div>
 
             {/* Class-specific metadata */}
             {cls === 'real_estate' && (
               <div style={section}>
-                <div style={label}>Property details</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <input placeholder="Address" value={form.metadata?.address ?? ''} onChange={(e) => setMeta('address', e.target.value)} style={input} />
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input type="number" placeholder="Mortgage balance" value={form.metadata?.mortgageBalance ?? ''} onChange={(e) => setMeta('mortgageBalance', Number(e.target.value))} style={{ ...input, flex: 1 }} />
-                    <input type="number" placeholder="Rate %" value={form.metadata?.mortgageRate ?? ''} onChange={(e) => setMeta('mortgageRate', Number(e.target.value))} style={{ ...input, width: 80, flex: 'none' }} />
+                <div style={fieldLabel}>Property details</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
+                  <input placeholder="Address" value={form.metadata?.address ?? ''} onChange={(e) => setMeta('address', e.target.value)} style={inputStyle} />
+                  <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
+                    <input type="number" placeholder="Mortgage balance" value={form.metadata?.mortgageBalance ?? ''} onChange={(e) => setMeta('mortgageBalance', Number(e.target.value))} style={{ ...inputStyle, flex: 1 }} />
+                    <input type="number" placeholder="Rate %" value={form.metadata?.mortgageRate ?? ''} onChange={(e) => setMeta('mortgageRate', Number(e.target.value))} style={{ ...inputStyle, width: 80, flex: 'none' }} />
                   </div>
-                  <input type="date" placeholder="Mortgage expiry" value={form.metadata?.mortgageExpiry ?? ''} onChange={(e) => setMeta('mortgageExpiry', e.target.value)} style={input} />
-                  <input type="number" placeholder="Annual costs (insurance, service charge)" value={form.metadata?.annualCosts ?? ''} onChange={(e) => setMeta('annualCosts', Number(e.target.value))} style={input} />
+                  <input type="date" value={form.metadata?.mortgageExpiry ?? ''} onChange={(e) => setMeta('mortgageExpiry', e.target.value)} style={inputStyle} />
+                  <input type="number" placeholder="Annual costs (insurance, service charge)" value={form.metadata?.annualCosts ?? ''} onChange={(e) => setMeta('annualCosts', Number(e.target.value))} style={inputStyle} />
                 </div>
               </div>
             )}
 
             {cls === 'cars' && (
               <div style={section}>
-                <div style={label}>Vehicle details</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input placeholder="Make" value={form.metadata?.make ?? ''} onChange={(e) => setMeta('make', e.target.value)} style={{ ...input, flex: 1 }} />
-                    <input placeholder="Model" value={form.metadata?.model ?? ''} onChange={(e) => setMeta('model', e.target.value)} style={{ ...input, flex: 1 }} />
+                <div style={fieldLabel}>Vehicle details</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
+                    <input placeholder="Make" value={form.metadata?.make ?? ''} onChange={(e) => setMeta('make', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+                    <input placeholder="Model" value={form.metadata?.model ?? ''} onChange={(e) => setMeta('model', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input type="number" placeholder="Year" value={form.metadata?.year ?? ''} onChange={(e) => setMeta('year', Number(e.target.value))} style={{ ...input, flex: 1 }} />
-                    <input type="number" placeholder="Mileage (km)" value={form.metadata?.mileage ?? ''} onChange={(e) => setMeta('mileage', Number(e.target.value))} style={{ ...input, flex: 1 }} />
+                  <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
+                    <input type="number" placeholder="Year" value={form.metadata?.year ?? ''} onChange={(e) => setMeta('year', Number(e.target.value))} style={{ ...inputStyle, flex: 1 }} />
+                    <input type="number" placeholder="Mileage (km)" value={form.metadata?.mileage ?? ''} onChange={(e) => setMeta('mileage', Number(e.target.value))} style={{ ...inputStyle, flex: 1 }} />
                   </div>
-                  <input type="number" placeholder="Annual insurance" value={form.metadata?.annualInsurance ?? ''} onChange={(e) => setMeta('annualInsurance', Number(e.target.value))} style={input} />
+                  <input type="number" placeholder="Annual insurance" value={form.metadata?.annualInsurance ?? ''} onChange={(e) => setMeta('annualInsurance', Number(e.target.value))} style={inputStyle} />
                 </div>
               </div>
             )}
 
             {cls === 'watches' && (
               <div style={section}>
-                <div style={label}>Watch details</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input placeholder="Brand (e.g. Rolex)" value={form.metadata?.brand ?? ''} onChange={(e) => setMeta('brand', e.target.value)} style={{ ...input, flex: 1 }} />
-                    <input placeholder="Reference" value={form.metadata?.reference ?? ''} onChange={(e) => setMeta('reference', e.target.value)} style={{ ...input, flex: 1 }} />
+                <div style={fieldLabel}>Watch details</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
+                    <input placeholder="Brand (e.g. Rolex)" value={form.metadata?.brand ?? ''} onChange={(e) => setMeta('brand', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+                    <input placeholder="Reference" value={form.metadata?.reference ?? ''} onChange={(e) => setMeta('reference', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
                   </div>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#475569' }}>
+                  <div style={{ display: 'flex', gap: 'var(--sp-md)' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-xs)', fontSize: 13, color: 'var(--color-text-2)' }}>
                       <input type="checkbox" checked={form.metadata?.hasBox ?? false} onChange={(e) => setMeta('hasBox', e.target.checked)} />
                       Box
                     </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#475569' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-xs)', fontSize: 13, color: 'var(--color-text-2)' }}>
                       <input type="checkbox" checked={form.metadata?.hasPapers ?? false} onChange={(e) => setMeta('hasPapers', e.target.checked)} />
                       Papers
                     </label>
@@ -241,30 +256,39 @@ export default function AddAssetPage() {
 
             {cls === 'pension' && (
               <div style={section}>
-                <div style={label}>Pension details</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <input placeholder="Provider (e.g. Vanguard)" value={form.institution ?? ''} onChange={(e) => set('institution', e.target.value)} style={input} />
-                  <input type="number" placeholder="Monthly contribution" value={form.metadata?.contributionMonthly ?? ''} onChange={(e) => setMeta('contributionMonthly', Number(e.target.value))} style={input} />
+                <div style={fieldLabel}>Pension details</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
+                  <input placeholder="Provider (e.g. Vanguard)" value={form.institution ?? ''} onChange={(e) => set('institution', e.target.value)} style={inputStyle} />
+                  <input type="number" placeholder="Monthly contribution" value={form.metadata?.contributionMonthly ?? ''} onChange={(e) => setMeta('contributionMonthly', Number(e.target.value))} style={inputStyle} />
                 </div>
               </div>
             )}
 
-            {/* Country + Notes */}
+            {/* Country */}
             <div style={section}>
-              <div style={label}>Country / Jurisdiction</div>
-              <input placeholder="e.g. DE, GB, CH" value={form.country ?? ''} onChange={(e) => set('country', e.target.value.toUpperCase())} style={input} maxLength={2} />
+              <div style={fieldLabel}>Country / Jurisdiction</div>
+              <input
+                placeholder="e.g. DE, GB, CH"
+                value={form.country ?? ''}
+                onChange={(e) => set('country', e.target.value.toUpperCase())}
+                style={inputStyle}
+                maxLength={2}
+              />
             </div>
 
-            {/* Save */}
+            {/* Save button — pill shape, brand blue */}
             <button
               onClick={save}
-              disabled={!form.name || !form.value || saving}
+              disabled={!canSave || saving}
               style={{
-                width: '100%', padding: '16px', background: form.name && form.value ? '#0F172A' : '#E2E8F0',
-                color: form.name && form.value ? '#FFF' : '#94A3B8',
-                border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 700,
-                cursor: form.name && form.value ? 'pointer' : 'default',
-                marginTop: 8,
+                width: '100%', height: 52,
+                background: canSave ? 'var(--color-accent)' : '#E2E8F0',
+                color: canSave ? '#FFF' : 'var(--color-text-3)',
+                border: 'none', borderRadius: 'var(--r-pill)',
+                fontSize: 15, fontWeight: 700,
+                cursor: canSave ? 'pointer' : 'default',
+                marginTop: 'var(--sp-sm)',
+                transition: 'background 0.2s ease',
               }}
             >
               {saving ? 'Saving…' : 'Save Asset'}
@@ -277,31 +301,32 @@ export default function AddAssetPage() {
 }
 
 const section: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.72)',
+  background: 'var(--color-card)',
   backdropFilter: 'blur(20px)',
   WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(0,0,0,0.07)',
-  borderRadius: 18,
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--r-xl)',
   padding: '16px 18px',
 };
 
-const label: React.CSSProperties = {
-  fontSize: 12,
-  color: '#94A3B8',
-  fontWeight: 600,
+const fieldLabel: React.CSSProperties = {
+  fontSize: 11,
+  color: 'var(--color-text-3)',
+  fontWeight: 700,
   textTransform: 'uppercase',
-  letterSpacing: 0.6,
+  letterSpacing: 0.7,
   marginBottom: 10,
 };
 
-const input: React.CSSProperties = {
+const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '12px 14px',
+  height: 48,
+  padding: '0 14px',
   background: 'rgba(241,245,249,0.8)',
-  border: '1px solid rgba(0,0,0,0.07)',
-  borderRadius: 12,
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--r-md)',
   fontSize: 14,
-  color: '#0F172A',
+  color: 'var(--color-text-1)',
   outline: 'none',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
@@ -310,14 +335,15 @@ const input: React.CSSProperties = {
 const bigOptionBtn: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 16,
-  padding: '20px 20px',
-  background: 'rgba(255,255,255,0.72)',
+  gap: 'var(--sp-md)',
+  padding: 'var(--sp-lg)',
+  background: 'var(--color-card)',
   backdropFilter: 'blur(20px)',
   WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(0,0,0,0.07)',
-  borderRadius: 18,
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--r-xl)',
   cursor: 'pointer',
   textAlign: 'left',
   width: '100%',
+  minHeight: 80,
 };

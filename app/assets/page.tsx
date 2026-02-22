@@ -34,44 +34,57 @@ export default function AssetsPage() {
   }, 0);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F8FAFC', paddingTop: 72, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--color-bg)', paddingTop: 72, paddingBottom: 100 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 var(--sp-md)' }}>
 
         {/* Header */}
-        <div style={{ paddingTop: 12, marginBottom: 20, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div style={{ paddingTop: 12, marginBottom: 'var(--sp-lg)', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 500, color: '#0F172A', margin: 0 }}>Assets</h1>
-            <div style={{ fontSize: 13, color: '#94A3B8', marginTop: 4 }}>{filtered.length} items · {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', notation: 'compact', maximumFractionDigits: 0 }).format(totalValue)}</div>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 500, color: 'var(--color-text-1)', margin: 0 }}>Assets</h1>
+            <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 4 }}>
+              {filtered.length} items · {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', notation: 'compact', maximumFractionDigits: 0 }).format(totalValue)}
+            </div>
           </div>
           <Link
             href="/assets/add"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#0F172A', color: '#FFF', borderRadius: 12, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '0 18px', height: 44,
+              background: 'var(--color-accent)', color: '#FFF',
+              borderRadius: 'var(--r-pill)',
+              fontSize: 14, fontWeight: 600, textDecoration: 'none',
+            }}
           >
             + Add
           </Link>
         </div>
 
         {/* Class Filter Pills */}
-        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', marginBottom: 20, paddingBottom: 4 }}>
-          {(['all', ...usedClasses] as (AssetClass | 'all')[]).map((cls) => (
-            <button
-              key={cls}
-              onClick={() => setFilter(cls)}
-              style={{
-                padding: '7px 14px',
-                borderRadius: 20,
-                border: '1px solid',
-                borderColor: filter === cls ? '#0F172A' : 'rgba(0,0,0,0.08)',
-                background: filter === cls ? '#0F172A' : 'rgba(255,255,255,0.72)',
-                color: filter === cls ? '#FFF' : '#64748B',
-                fontSize: 12, fontWeight: 600,
-                cursor: 'pointer', whiteSpace: 'nowrap',
-                backdropFilter: 'blur(12px)',
-              }}
-            >
-              {cls === 'all' ? 'All' : cls.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 'var(--sp-xs)', overflowX: 'auto', marginBottom: 'var(--sp-lg)', paddingBottom: 4, scrollbarWidth: 'none' }}>
+          {(['all', ...usedClasses] as (AssetClass | 'all')[]).map((cls) => {
+            const active = filter === cls;
+            return (
+              <button
+                key={cls}
+                onClick={() => setFilter(cls)}
+                style={{
+                  padding: '0 14px', height: 36,
+                  borderRadius: 'var(--r-pill)',
+                  border: '1px solid',
+                  borderColor: active ? 'var(--color-accent)' : 'var(--color-border-md)',
+                  background: active ? 'var(--color-accent)' : 'var(--color-card)',
+                  color: active ? '#FFF' : 'var(--color-text-2)',
+                  fontSize: 13, fontWeight: 600,
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 0.15s ease',
+                  flexShrink: 0,
+                }}
+              >
+                {cls === 'all' ? 'All' : cls.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </button>
+            );
+          })}
         </div>
 
         {/* Asset List */}
@@ -79,16 +92,27 @@ export default function AssetsPage() {
           {filtered.map((asset) => (
             <div
               key={asset.id}
-              style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 18, padding: '16px 18px', position: 'relative' }}
+              style={{
+                background: 'var(--color-card)',
+                backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--r-xl)', padding: '16px 18px',
+                position: 'relative',
+              }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(56,189,248,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 'var(--r-md)',
+                  background: 'var(--color-accent-bg)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 20, flexShrink: 0,
+                }}>
                   {CLASS_ICONS[asset.class] ?? '◆'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', marginBottom: 2 }}>{asset.name}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-1)', marginBottom: 2 }}>{asset.name}</div>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>
+                    <span style={{ fontSize: 12, color: 'var(--color-text-3)' }}>
                       {asset.class.replace('_', ' ')}
                       {asset.country ? ` · ${asset.country}` : ''}
                       {asset.institution ? ` · ${asset.institution}` : ''}
@@ -96,27 +120,32 @@ export default function AssetsPage() {
                   </div>
                   {/* Source badge */}
                   <div style={{ marginTop: 6, display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 6, background: asset.source === 'tink' ? '#D1FAE5' : asset.source === 'photo' ? '#E0F2FE' : '#F1F5F9', color: asset.source === 'tink' ? '#059669' : asset.source === 'photo' ? '#0284C7' : '#64748B', fontWeight: 600 }}>
+                    <span style={{
+                      fontSize: 11, padding: '3px 8px', borderRadius: 'var(--r-sm)',
+                      background: asset.source === 'tink' ? '#D1FAE5' : asset.source === 'photo' ? 'var(--color-accent-bg)' : '#F1F5F9',
+                      color: asset.source === 'tink' ? '#059669' : asset.source === 'photo' ? 'var(--color-accent)' : 'var(--color-text-2)',
+                      fontWeight: 600,
+                    }}>
                       {asset.source === 'tink' ? '⟳ Synced' : asset.source === 'photo' ? '📷 Photo' : asset.source === 'document_ai' ? '📄 Scanned' : 'Manual'}
                     </span>
                     {asset.metadata?.mortgageExpiry && (
-                      <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 6, background: '#FEF3C7', color: '#D97706', fontWeight: 600 }}>
+                      <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 'var(--r-sm)', background: '#FEF3C7', color: '#D97706', fontWeight: 600 }}>
                         Mortgage expires {new Date(asset.metadata.mortgageExpiry).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })}
                       </span>
                     )}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text-1)' }}>
                     {fmt(asset.value, asset.currency)}
                   </div>
                   {asset.unrealizedGain !== undefined && (
-                    <div style={{ fontSize: 12, color: asset.unrealizedGain >= 0 ? '#10B981' : '#EF4444', marginTop: 2, fontWeight: 600 }}>
+                    <div style={{ fontSize: 12, color: asset.unrealizedGain >= 0 ? 'var(--color-positive)' : 'var(--color-negative)', marginTop: 2, fontWeight: 600 }}>
                       {asset.unrealizedGain >= 0 ? '+' : ''}{fmt(asset.unrealizedGain, asset.currency)}
                     </div>
                   )}
                   {asset.costBasis && (
-                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>
+                    <div style={{ fontSize: 11, color: 'var(--color-text-3)', marginTop: 1 }}>
                       cost {fmt(asset.costBasis, asset.currency)}
                     </div>
                   )}
@@ -125,41 +154,41 @@ export default function AssetsPage() {
 
               {/* Metadata details */}
               {asset.metadata && (
-                <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--color-border)', display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                   {asset.metadata.mortgageBalance && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Mortgage: </span>
-                      <span style={{ color: '#EF4444', fontWeight: 600 }}>{fmt(asset.metadata.mortgageBalance, asset.currency)}</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Mortgage: </span>
+                      <span style={{ color: 'var(--color-negative)', fontWeight: 600 }}>{fmt(asset.metadata.mortgageBalance, asset.currency)}</span>
                     </div>
                   )}
                   {asset.metadata.mortgageRate && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Rate: </span>
-                      <span style={{ color: '#0F172A', fontWeight: 600 }}>{asset.metadata.mortgageRate}%</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Rate: </span>
+                      <span style={{ color: 'var(--color-text-1)', fontWeight: 600 }}>{asset.metadata.mortgageRate}%</span>
                     </div>
                   )}
                   {asset.metadata.contributionMonthly && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Monthly: </span>
-                      <span style={{ color: '#0F172A', fontWeight: 600 }}>{fmt(asset.metadata.contributionMonthly, asset.currency)}</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Monthly: </span>
+                      <span style={{ color: 'var(--color-text-1)', fontWeight: 600 }}>{fmt(asset.metadata.contributionMonthly, asset.currency)}</span>
                     </div>
                   )}
                   {asset.metadata.make && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Vehicle: </span>
-                      <span style={{ color: '#0F172A', fontWeight: 600 }}>{asset.metadata.make} {asset.metadata.model} {asset.metadata.year}</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Vehicle: </span>
+                      <span style={{ color: 'var(--color-text-1)', fontWeight: 600 }}>{asset.metadata.make} {asset.metadata.model} {asset.metadata.year}</span>
                     </div>
                   )}
                   {asset.metadata.brand && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Watch: </span>
-                      <span style={{ color: '#0F172A', fontWeight: 600 }}>{asset.metadata.brand} {asset.metadata.reference}</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Watch: </span>
+                      <span style={{ color: 'var(--color-text-1)', fontWeight: 600 }}>{asset.metadata.brand} {asset.metadata.reference}</span>
                     </div>
                   )}
                   {asset.metadata.hasPapers !== undefined && (
-                    <div style={{ fontSize: 11 }}>
-                      <span style={{ color: '#94A3B8' }}>Papers: </span>
-                      <span style={{ color: asset.metadata.hasPapers ? '#10B981' : '#EF4444', fontWeight: 600 }}>{asset.metadata.hasPapers ? 'Yes' : 'No'}</span>
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ color: 'var(--color-text-3)' }}>Papers: </span>
+                      <span style={{ color: asset.metadata.hasPapers ? 'var(--color-positive)' : 'var(--color-negative)', fontWeight: 600 }}>{asset.metadata.hasPapers ? 'Yes' : 'No'}</span>
                     </div>
                   )}
                 </div>
@@ -167,16 +196,26 @@ export default function AssetsPage() {
 
               {/* Delete confirm */}
               {confirmDelete === asset.id ? (
-                <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                  <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, padding: '8px', background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 10, fontSize: 12, cursor: 'pointer', color: '#64748B', fontWeight: 600 }}>
+                <div style={{ marginTop: 12, display: 'flex', gap: 'var(--sp-sm)' }}>
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    style={{ flex: 1, height: 44, background: 'rgba(0,0,0,0.04)', border: '1px solid var(--color-border-md)', borderRadius: 'var(--r-md)', fontSize: 13, cursor: 'pointer', color: 'var(--color-text-2)', fontWeight: 600 }}
+                  >
                     Cancel
                   </button>
-                  <button onClick={() => { deleteAsset(asset.id); setConfirmDelete(null); }} style={{ flex: 1, padding: '8px', background: '#EF4444', border: 'none', borderRadius: 10, fontSize: 12, cursor: 'pointer', color: '#FFF', fontWeight: 600 }}>
+                  <button
+                    onClick={() => { deleteAsset(asset.id); setConfirmDelete(null); }}
+                    style={{ flex: 1, height: 44, background: 'var(--color-negative)', border: 'none', borderRadius: 'var(--r-md)', fontSize: 13, cursor: 'pointer', color: '#FFF', fontWeight: 600 }}
+                  >
                     Delete
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setConfirmDelete(asset.id)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: 16, padding: 0 }}>
+                <button
+                  onClick={() => setConfirmDelete(asset.id)}
+                  style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', color: 'var(--color-text-3)', cursor: 'pointer', fontSize: 18, padding: 4, lineHeight: 1, minWidth: 30, minHeight: 30 }}
+                  aria-label="Delete asset"
+                >
                   ×
                 </button>
               )}
@@ -185,7 +224,7 @@ export default function AssetsPage() {
         </div>
 
         {filtered.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94A3B8' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-text-3)' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>⊟</div>
             <div style={{ fontSize: 14 }}>No assets in this category</div>
           </div>

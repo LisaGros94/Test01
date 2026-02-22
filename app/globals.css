@@ -4,28 +4,63 @@
   padding: 0;
 }
 
+/* ── Design Tokens ──────────────────────────────────────────────── */
 :root {
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Brand */
+  --color-accent:    #1A56DB;
+  --color-accent-bg: rgba(26, 86, 219, 0.08);
+
+  /* Finance semantics */
+  --color-positive:  #10B981;
+  --color-negative:  #EF4444;
+  --color-neutral:   #F59E0B;
+
+  /* Backgrounds */
+  --color-bg:        #F8FAFC;
+  --color-card:      rgba(255, 255, 255, 0.80);
+  --color-card-solid:#FFFFFF;
+
+  /* Text */
+  --color-text-1:    #0F172A;
+  --color-text-2:    #64748B;
+  --color-text-3:    #94A3B8;
+
+  /* Borders */
+  --color-border:    rgba(0, 0, 0, 0.07);
+  --color-border-md: rgba(0, 0, 0, 0.10);
+
+  /* Radius */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   20px;
+  --r-pill: 100px;
+
+  /* Spacing (4-pt grid) */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  20px;
+  --sp-xl:  32px;
+  --sp-xxl: 48px;
 }
 
+/* ── Base ───────────────────────────────────────────────────────── */
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--font-sans);
-  background: #F8FAFC;
-  color: #0F172A;
+  background: var(--color-bg);
+  color: var(--color-text-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
 }
-
-/* Scrollbar — minimal */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
 
 html, body { overflow-x: hidden; }
 
@@ -40,6 +75,11 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(56,189,248,0.5);
+  outline: 2px solid rgba(26, 86, 219, 0.45);
   outline-offset: 2px;
 }
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
