@@ -423,6 +423,13 @@ export const useStore = create<ClarityStore>()(
     }),
     {
       name: 'clarity-store',
+      version: 1,
+      migrate: (persisted: any) => {
+        if (persisted?.profile?.name === 'Alexander') {
+          persisted.profile.name = 'Max';
+        }
+        return persisted;
+      },
       partialize: (s) => ({
         assets: s.assets,
         signals: s.signals,
