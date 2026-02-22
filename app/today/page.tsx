@@ -115,10 +115,13 @@ function ScoreGauge({ score, label }: { score: number; label: string }) {
 
 // ── Page ──────────────────────────────────────────────────────────
 export default function TodayPage() {
-  const { signals, signalState, assets, profile, computePortfolio, portfolio } = useStore();
+  const { signals, signalState, assets, profile, computePortfolio, portfolio, refreshLivePrices, refreshQontoBalance } = useStore();
 
   useEffect(() => {
     if (!portfolio) computePortfolio();
+    // Refresh live prices (crypto + stocks) and Qonto balance in parallel
+    refreshLivePrices();
+    refreshQontoBalance();
   }, []);
 
   const { score, label: scoreLabel } = useMemo(
@@ -269,8 +272,19 @@ export default function TodayPage() {
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-1)' }}>
-                    {fmtCompact(asset.value, asset.currency)}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-1)' }}>
+                      {fmtCompact(asset.value, asset.currency)}
+                    </div>
+                    {asset.metadata?.pricePerUnit && (
+                      <span style={{
+                        fontSize: 9, color: 'var(--color-positive)', fontWeight: 700,
+                        background: 'rgba(52,211,153,0.10)', border: '1px solid rgba(52,211,153,0.20)',
+                        padding: '1px 5px', borderRadius: 'var(--r-pill)', letterSpacing: 0.3,
+                      }}>
+                        LIVE
+                      </span>
+                    )}
                   </div>
                   {asset.unrealizedGain != null && (
                     <div style={{

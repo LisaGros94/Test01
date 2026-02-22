@@ -230,6 +230,8 @@ interface ClarityStore {
 
   // Computed
   computePortfolio: () => PortfolioSummary;
+  refreshLivePrices: () => Promise<void>;
+  refreshQontoBalance: () => Promise<{ connected: boolean; balanceEur?: number }>;
 }
 
 function computePortfolioFromAssets(assets: Asset[]): PortfolioSummary {
@@ -345,6 +347,78 @@ export const useStore = create<ClarityStore>()(
         const p = computePortfolioFromAssets(get().assets);
         set({ portfolio: p });
         return p;
+      },
+
+      refreshLivePrices: async () => {
+        const { assets } = get();
+        // Find assets with a ticker and quantity (can be priced live)
+        const priceableAssets = assets.filter(
+          (a) => a.metadata?.ticker && a.metadata?.quantity,
+        );
+        if (!priceableAssets.length) return;
+
+        const tickers = [...new Set(priceableAssets.map((a) => a.metadata!.ticker!))];
+
+        let prices: Record<string, number | null> = {};
+        try {
+          const res = await fetch(`/api/prices?tickers=${tickers.join(',')}`);
+          if (res.ok) prices = await res.json();
+        } catch {
+          return; // silently skip on network failure
+        }
+
+        const now = new Date().toISOString();
+        const updatedAssets = assets.map((a) => {
+          if (!a.metadata?.ticker || !a.metadata?.quantity) return a;
+          const price = prices[a.metadata.ticker];
+          if (!price) return a;
+          const newValue = Math.round(a.metadata.quantity * price);
+          const unrealizedGain =
+            a.costBasis != null ? newValue - a.costBasis : a.unrealizedGain;
+          return {
+            ...a,
+            value: newValue,
+            unrealizedGain,
+            metadata: { ...a.metadata, pricePerUnit: price },
+            lastUpdated: now,
+          };
+        });
+
+        const p = computePortfolioFromAssets(updatedAssets);
+        set({ assets: updatedAssets, portfolio: p });
+      },
+      refreshQontoBalance: async () => {
+        try {
+          const res = await fetch('/api/qonto/balance');
+          const data = await res.json();
+
+          if (!data.configured || !data.totalBalanceEur) {
+            return { connected: false };
+          }
+
+          // Update the first cash asset tagged as Qonto, or the largest cash asset
+          const { assets } = get();
+          const cashAssets = assets.filter((a) => a.class === 'cash');
+          if (!cashAssets.length) return { connected: true, balanceEur: data.totalBalanceEur };
+
+          const target = cashAssets.find((a) =>
+            a.institution?.toLowerCase().includes('qonto'),
+          ) ?? cashAssets[0];
+
+          const now = new Date().toISOString();
+          const updatedAssets = assets.map((a) =>
+            a.id === target.id
+              ? { ...a, value: Math.round(data.totalBalanceEur), lastUpdated: now, institution: a.institution ?? 'Qonto' }
+              : a,
+          );
+
+          const p = computePortfolioFromAssets(updatedAssets);
+          set({ assets: updatedAssets, portfolio: p });
+
+          return { connected: true, balanceEur: data.totalBalanceEur };
+        } catch {
+          return { connected: false };
+        }
       },
     }),
     {
