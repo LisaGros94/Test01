@@ -39,21 +39,23 @@ export async function GET() {
     const org  = data.organization;
 
     // bank_accounts is an array; sum all EUR balances
-    const accounts: { balance_cents: number; balance_currency: string; name: string; iban: string }[] =
+    const accounts: { balance_cents: number; currency: string; name: string; iban: string; status: string }[] =
       org.bank_accounts ?? [];
 
-    const totalBalanceEur = accounts
-      .filter((a) => a.balance_currency === 'EUR')
+    const activeAccounts = accounts.filter((a) => a.status === 'active' || !a.status);
+
+    const totalBalanceEur = activeAccounts
+      .filter((a) => a.currency === 'EUR')
       .reduce((sum, a) => sum + a.balance_cents / 100, 0);
 
     return NextResponse.json({
       configured: true,
       totalBalanceEur,
-      accounts: accounts.map((a) => ({
+      accounts: activeAccounts.map((a) => ({
         name: a.name,
         iban: a.iban,
-        balanceEur: a.balance_currency === 'EUR' ? a.balance_cents / 100 : null,
-        currency: a.balance_currency,
+        balanceEur: a.currency === 'EUR' ? a.balance_cents / 100 : null,
+        currency: a.currency,
       })),
       orgName: org.legal_name ?? org.name,
     });
