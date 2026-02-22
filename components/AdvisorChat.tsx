@@ -9,7 +9,7 @@ const SUGGESTED_PROMPTS = [
   { icon: '⊛', text: 'How can I reduce my tax bill before year-end?' },
   { icon: '⟳', text: 'Am I on track to retire at 58?' },
   { icon: '◈', text: 'What would happen if I sold my Bitcoin today?' },
-  { icon: '⊞', text: 'Walk me through my mortgage renewal options' },
+  { icon: '▣', text: 'Walk me through my mortgage renewal options' },
   { icon: '◷', text: 'Explain my property concentration risk' },
 ];
 
@@ -24,7 +24,7 @@ export default function AdvisorChat() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: `Hello${profile?.name ? ` ${profile.name}` : ''}. I'm your Clarity advisor. I have full context on your portfolio — €${portfolio ? Math.round(portfolio.netWorth / 1000) + 'k' : '—'} net worth across ${assets.length} assets. What would you like to explore?`,
+      content: `Hello${profile?.name ? `, ${profile.name}` : ''}. I have full context on your portfolio — €${portfolio ? Math.round(portfolio.netWorth / 1000) + 'k' : '—'} net worth across ${assets.length} assets. What would you like to explore?`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -52,10 +52,7 @@ export default function AdvisorChat() {
       retirementAge: profile?.retirementAge,
       retirementIncome: profile?.retirementIncome,
       topAssets: assets.slice(0, 6).map((a) => ({
-        name: a.name,
-        class: a.class,
-        value: a.value,
-        currency: a.currency,
+        name: a.name, class: a.class, value: a.value, currency: a.currency,
         unrealizedGain: a.unrealizedGain,
         metadata: {
           mortgageBalance: a.metadata?.mortgageBalance,
@@ -70,18 +67,11 @@ export default function AdvisorChat() {
     if (!text.trim() || streaming) return;
 
     const userMsg: AdvisorMessage = {
-      id: `u-${Date.now()}`,
-      role: 'user',
-      content: text,
-      timestamp: new Date().toISOString(),
+      id: `u-${Date.now()}`, role: 'user', content: text, timestamp: new Date().toISOString(),
     };
-
     const assistantId = `a-${Date.now()}`;
     const assistantMsg: AdvisorMessage = {
-      id: assistantId,
-      role: 'assistant',
-      content: '',
-      timestamp: new Date().toISOString(),
+      id: assistantId, role: 'assistant', content: '', timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
@@ -97,11 +87,7 @@ export default function AdvisorChat() {
       const res = await fetch('/api/advisor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: historyForAPI,
-          portfolioContext: buildPortfolioContext(),
-          voiceMode: voiceEnabled,
-        }),
+        body: JSON.stringify({ messages: historyForAPI, portfolioContext: buildPortfolioContext(), voiceMode: voiceEnabled }),
       });
 
       if (!res.body) throw new Error('No stream');
@@ -113,37 +99,27 @@ export default function AdvisorChat() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
-        fullText += chunk;
-        setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: fullText } : m))
-        );
+        fullText += decoder.decode(value);
+        setMessages((prev) => prev.map((m) => m.id === assistantId ? { ...m, content: fullText } : m));
       }
 
       if (voiceEnabled && fullText) {
         try {
           const voiceRes = await fetch('/api/voice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: fullText }),
           });
           if (voiceRes.ok) {
             const blob = await voiceRes.blob();
             const url = URL.createObjectURL(blob);
             playAudio(url);
-            setMessages((prev) =>
-              prev.map((m) => (m.id === assistantId ? { ...m, audioUrl: url } : m))
-            );
+            setMessages((prev) => prev.map((m) => m.id === assistantId ? { ...m, audioUrl: url } : m));
           }
         } catch {}
       }
     } catch {
       setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, content: 'I encountered an issue. Please try again.' }
-            : m
-        )
+        prev.map((m) => m.id === assistantId ? { ...m, content: 'I encountered an issue. Please try again.' } : m)
       );
     } finally {
       setStreaming(false);
@@ -163,103 +139,89 @@ export default function AdvisorChat() {
     : null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative', background: 'var(--color-bg)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--color-bg)' }}>
 
-      {/* ── Premium Header ─────────────────────────────────────── */}
+      {/* ── Header ─────────────────────────────────────────────── */}
       <div style={{
-        background: 'var(--color-accent)',
         padding: '14px 20px',
+        borderBottom: '1px solid var(--color-border)',
+        background: 'var(--color-surface-1)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        position: 'relative', overflow: 'hidden',
         flexShrink: 0,
       }}>
-        {/* Background decoration */}
-        <div style={{ position: 'absolute', top: -30, right: -30, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, position: 'relative', zIndex: 1 }}>
-          {/* Advisor avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Advisor mark */}
           <div style={{
-            width: 38, height: 38, borderRadius: '50%',
-            background: 'rgba(255,255,255,0.18)',
-            border: '1.5px solid rgba(255,255,255,0.35)',
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'var(--color-accent-bg)',
+            border: '1px solid rgba(200,169,110,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 17, flexShrink: 0,
+            fontSize: 14, color: 'var(--color-accent)', flexShrink: 0,
           }}>
             ◷
           </div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#FFF', lineHeight: 1.2 }}>Clarity Advisor</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#A7F3D0' }} />
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-1)', lineHeight: 1.2 }}>
+              Clarity Advisor
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--color-text-3)', marginTop: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--color-positive)', display: 'inline-block', flexShrink: 0 }} />
               {netWorthFmt ? `${netWorthFmt} · ${assets.length} assets loaded` : 'Loading context…'}
             </div>
           </div>
         </div>
 
-        {/* Voice toggle */}
         <button
           onClick={() => setVoiceEnabled(!voiceEnabled)}
           title={voiceEnabled ? 'Disable voice' : 'Enable voice'}
           aria-label={voiceEnabled ? 'Disable voice' : 'Enable voice'}
           style={{
             width: 40, height: 40, borderRadius: '50%',
-            background: voiceEnabled ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.10)',
-            border: '1.5px solid',
-            borderColor: voiceEnabled ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.20)',
-            cursor: 'pointer', fontSize: 17,
+            background: voiceEnabled ? 'var(--color-accent-bg)' : 'var(--color-surface-2)',
+            border: `1px solid ${voiceEnabled ? 'rgba(200,169,110,0.4)' : 'var(--color-border)'}`,
+            cursor: 'pointer', fontSize: 15,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0, position: 'relative', zIndex: 1,
+            color: voiceEnabled ? 'var(--color-accent)' : 'var(--color-text-3)',
             transition: 'all 0.2s ease',
           }}
         >
-          {voiceEnabled ? '🔊' : '🔇'}
+          {voiceEnabled ? '▶' : '◌'}
         </button>
       </div>
 
       {/* ── Message feed ──────────────────────────────────────── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {messages.map((msg) => {
           const isUser = msg.role === 'user';
           return (
-            <div
-              key={msg.id}
-              style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 10 }}
-            >
-              {/* Advisor avatar on assistant messages */}
+            <div key={msg.id} style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 10 }}>
               {!isUser && (
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%',
-                  background: 'var(--color-accent)',
+                  width: 26, height: 26, borderRadius: '50%',
+                  background: 'var(--color-accent-bg)',
+                  border: '1px solid rgba(200,169,110,0.25)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, color: '#FFF', flexShrink: 0, marginBottom: 2,
+                  fontSize: 11, color: 'var(--color-accent)', flexShrink: 0, marginBottom: 2,
                 }}>
                   ◷
                 </div>
               )}
-
-              <div
-                style={{
-                  maxWidth: '78%',
-                  padding: '12px 16px',
-                  borderRadius: isUser
-                    ? 'var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg)'
-                    : 'var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm)',
-                  background: isUser ? 'var(--color-accent)' : 'var(--color-card)',
-                  border: isUser ? 'none' : '1px solid var(--color-border)',
-                  backdropFilter: isUser ? 'none' : 'blur(16px)',
-                  color: isUser ? '#FFFFFF' : 'var(--color-text-1)',
-                  fontSize: 14,
-                  lineHeight: 1.65,
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: !isUser ? 'var(--font-sans)' : 'inherit',
-                }}
-              >
-                {msg.content || (
-                  <span style={{ color: 'var(--color-text-3)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <ThinkingDots />
-                  </span>
-                )}
+              <div style={{
+                maxWidth: '78%',
+                padding: '12px 16px',
+                borderRadius: isUser
+                  ? '16px 16px 4px 16px'
+                  : '16px 16px 16px 4px',
+                background: isUser ? 'var(--color-accent)' : 'var(--color-surface-1)',
+                border: isUser ? 'none' : '1px solid var(--color-border)',
+                color: isUser ? '#08090D' : 'var(--color-text-1)',
+                fontSize: 14,
+                lineHeight: 1.65,
+                whiteSpace: 'pre-wrap',
+                fontWeight: isUser ? 500 : 400,
+              }}>
+                {msg.content || <ThinkingDots />}
                 {msg.audioUrl && (
                   <button
                     onClick={() => playAudio(msg.audioUrl!)}
@@ -273,13 +235,17 @@ export default function AdvisorChat() {
           );
         })}
 
-        {/* ── Suggested prompts — empty state ── */}
+        {/* Suggested prompts */}
         {showSuggestions && (
           <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: 11, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 0.7, fontWeight: 700, marginBottom: 10 }}>
+            <div style={{
+              fontSize: 10, color: 'var(--color-text-3)',
+              textTransform: 'uppercase', letterSpacing: 1.0,
+              fontWeight: 700, marginBottom: 10,
+            }}>
               Try asking
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-xs)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {SUGGESTED_PROMPTS.map((p) => (
                 <button
                   key={p.text}
@@ -287,16 +253,15 @@ export default function AdvisorChat() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 12,
                     padding: '12px 16px', width: '100%', textAlign: 'left',
-                    background: 'var(--color-card)',
+                    background: 'var(--color-surface-1)',
                     border: '1px solid var(--color-border)',
                     borderRadius: 'var(--r-lg)',
                     cursor: 'pointer',
-                    backdropFilter: 'blur(12px)',
                     transition: 'border-color 0.15s ease',
                   }}
                 >
-                  <span style={{ fontSize: 15, color: 'var(--color-accent)', flexShrink: 0 }}>{p.icon}</span>
-                  <span style={{ fontSize: 13, color: 'var(--color-text-2)', fontWeight: 500, lineHeight: 1.4 }}>{p.text}</span>
+                  <span style={{ fontSize: 13, color: 'var(--color-accent)', flexShrink: 0 }}>{p.icon}</span>
+                  <span style={{ fontSize: 13, color: 'var(--color-text-2)', fontWeight: 500, lineHeight: 1.35 }}>{p.text}</span>
                 </button>
               ))}
             </div>
@@ -310,25 +275,23 @@ export default function AdvisorChat() {
       <div style={{
         padding: '10px 16px 10px',
         borderTop: '1px solid var(--color-border)',
-        background: 'rgba(248,250,252,0.95)',
-        backdropFilter: 'blur(20px)',
+        background: 'var(--color-surface-1)',
         flexShrink: 0,
       }}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
-          background: 'var(--color-card)',
+          background: 'var(--color-surface-2)',
           borderRadius: 'var(--r-pill)',
           padding: '4px 4px 4px 18px',
-          border: `1.5px solid ${streaming ? 'var(--color-accent)' : 'var(--color-border-md)'}`,
+          border: `1px solid ${streaming ? 'rgba(200,169,110,0.4)' : 'var(--color-border-md)'}`,
           transition: 'border-color 0.2s ease',
-          boxShadow: streaming ? '0 0 0 3px rgba(26,86,219,0.10)' : 'none',
         }}>
           <input
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={streaming ? 'Advisor is responding…' : 'Ask anything about your finances…'}
+            placeholder={streaming ? 'Responding…' : 'Ask anything about your portfolio…'}
             disabled={streaming}
             style={{
               flex: 1, background: 'none', border: 'none', outline: 'none',
@@ -339,24 +302,23 @@ export default function AdvisorChat() {
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || streaming}
-            aria-label="Send message"
+            aria-label="Send"
             style={{
               width: 40, height: 40, borderRadius: '50%',
-              background: input.trim() && !streaming ? 'var(--color-accent)' : '#E2E8F0',
+              background: input.trim() && !streaming ? 'var(--color-accent)' : 'var(--color-surface-3)',
               border: 'none',
               cursor: input.trim() && !streaming ? 'pointer' : 'default',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 16, transition: 'background 0.2s ease', flexShrink: 0,
-              color: input.trim() && !streaming ? '#FFFFFF' : 'var(--color-text-3)',
+              color: input.trim() && !streaming ? '#08090D' : 'var(--color-text-3)',
+              fontWeight: 700,
             }}
           >
             ↑
           </button>
         </div>
-
-        {/* Subtle footer note */}
-        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--color-text-3)', marginTop: 8 }}>
-          Clarity Advisor · Powered by Claude · Not financial advice
+        <div style={{ textAlign: 'center', fontSize: 10, color: 'var(--color-text-3)', marginTop: 8, letterSpacing: 0.3 }}>
+          Powered by Claude · Not financial advice
         </div>
       </div>
     </div>
@@ -364,23 +326,20 @@ export default function AdvisorChat() {
 }
 
 function ThinkingDots() {
-  const [dots, setDots] = useState(1);
+  const [active, setActive] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setDots((d) => (d >= 3 ? 1 : d + 1)), 450);
+    const t = setInterval(() => setActive((d) => (d + 1) % 3), 450);
     return () => clearInterval(t);
   }, []);
   return (
-    <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+    <span style={{ display: 'inline-flex', gap: 5, alignItems: 'center', padding: '2px 0' }}>
       {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          style={{
-            width: 6, height: 6, borderRadius: '50%',
-            background: i < dots ? 'var(--color-accent)' : 'var(--color-border-md)',
-            transition: 'background 0.2s ease',
-            display: 'inline-block',
-          }}
-        />
+        <span key={i} style={{
+          width: 5, height: 5, borderRadius: '50%',
+          background: i === active ? 'var(--color-accent)' : 'var(--color-surface-3)',
+          display: 'inline-block',
+          transition: 'background 0.2s ease',
+        }} />
       ))}
     </span>
   );

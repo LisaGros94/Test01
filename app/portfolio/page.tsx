@@ -29,8 +29,8 @@ export default function PortfolioPage() {
 
   if (!portfolio) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-3)' }}>
-        Loading…
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-3)', fontSize: 13 }}>
+        Loading
       </div>
     );
   }
@@ -41,38 +41,44 @@ export default function PortfolioPage() {
 
         {/* Header */}
         <div style={{ paddingTop: 12, marginBottom: 'var(--sp-lg)' }}>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 500, color: 'var(--color-text-1)', margin: 0 }}>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 400, color: 'var(--color-text-1)', margin: 0 }}>
             Portfolio
           </h1>
-          <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 4 }}>
-            {assets.length} assets · {profile?.country ?? 'DE'} · Updated now
+          <div style={{ fontSize: 12, color: 'var(--color-text-3)', marginTop: 4, letterSpacing: 0.3 }}>
+            {assets.length} assets · {profile?.country ?? 'DE'}
           </div>
         </div>
 
-        {/* Net Worth Banner — brand blue */}
+        {/* ── Net Worth Banner — dark gradient ── */}
         <div style={{
-          background: 'var(--color-accent)',
+          background: 'linear-gradient(150deg, #131926 0%, #0A0D18 100%)',
           borderRadius: 'var(--r-xl)',
-          padding: 'var(--sp-lg) var(--sp-lg)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          padding: 'var(--sp-lg)',
           marginBottom: 'var(--sp-sm)',
-          position: 'relative',
-          overflow: 'hidden',
+          position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: 0.9, marginBottom: 6, fontWeight: 600 }}>Total Net Worth</div>
-          <div style={{ fontFamily: 'var(--font-serif)', fontSize: 36, color: '#FFF', marginBottom: 14, fontWeight: 500 }}>{fmt(portfolio.netWorth)}</div>
-          <div style={{ display: 'flex', gap: 'var(--sp-xl)', paddingTop: 'var(--sp-md)', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+          <div style={{ position: 'absolute', top: -60, right: -60, width: 180, height: 180, borderRadius: '50%', background: 'rgba(200,169,110,0.04)', pointerEvents: 'none' }} />
+
+          <div style={{ fontSize: 10, color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 700, marginBottom: 10, opacity: 0.75 }}>
+            Total Net Worth
+          </div>
+          <div style={{ fontFamily: 'var(--font-serif)', fontSize: 40, color: 'var(--color-text-1)', fontWeight: 400, marginBottom: 18, letterSpacing: -0.5 }}>
+            {fmt(portfolio.netWorth)}
+          </div>
+
+          <div style={{ display: 'flex', gap: 'var(--sp-xl)', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
             <div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 3 }}>Assets</div>
-              <div style={{ fontSize: 14, color: '#FFF', fontWeight: 600 }}>{fmt(portfolio.totalAssets, true)}</div>
+              <div style={{ fontSize: 10, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>Assets</div>
+              <div style={{ fontSize: 14, color: 'var(--color-text-1)', fontWeight: 600 }}>{fmt(portfolio.totalAssets, true)}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 3 }}>Liabilities</div>
-              <div style={{ fontSize: 14, color: '#FCA5A5', fontWeight: 600 }}>−{fmt(portfolio.totalLiabilities, true)}</div>
+              <div style={{ fontSize: 10, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>Liabilities</div>
+              <div style={{ fontSize: 14, color: 'var(--color-negative)', fontWeight: 600 }}>−{fmt(portfolio.totalLiabilities, true)}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 3 }}>YTD</div>
-              <div style={{ fontSize: 14, color: '#A7F3D0', fontWeight: 600 }}>+{portfolio.yearChangePct.toFixed(1)}%</div>
+              <div style={{ fontSize: 10, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>YTD</div>
+              <div style={{ fontSize: 14, color: 'var(--color-positive)', fontWeight: 600 }}>+{portfolio.yearChangePct.toFixed(1)}%</div>
             </div>
           </div>
         </div>
@@ -101,18 +107,16 @@ export default function PortfolioPage() {
             </div>
 
             <div style={{ display: 'flex', gap: 'var(--sp-sm)', marginBottom: showTax ? 'var(--sp-md)' : 0 }}>
-              <div style={{ flex: 1, background: 'rgba(239,68,68,0.07)', borderRadius: 'var(--r-md)', padding: '10px 12px' }}>
-                <div style={{ fontSize: 10, color: 'var(--color-text-3)', marginBottom: 3, fontWeight: 600 }}>Unrealised gain</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-text-1)' }}>{fmt(tax.unrealizedGainsTotal, true)}</div>
-              </div>
-              <div style={{ flex: 1, background: 'rgba(16,185,129,0.07)', borderRadius: 'var(--r-md)', padding: '10px 12px' }}>
-                <div style={{ fontSize: 10, color: 'var(--color-text-3)', marginBottom: 3, fontWeight: 600 }}>Harvest saving</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-positive)' }}>{fmt(tax.taxLossHarvestingOpportunity, true)}</div>
-              </div>
-              <div style={{ flex: 1, background: 'var(--color-accent-bg)', borderRadius: 'var(--r-md)', padding: '10px 12px' }}>
-                <div style={{ fontSize: 10, color: 'var(--color-text-3)', marginBottom: 3, fontWeight: 600 }}>Pension room</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-accent)' }}>{fmt(tax.pensionHeadroom, true)}</div>
-              </div>
+              {[
+                { label: 'Unrealised gain', value: tax.unrealizedGainsTotal, color: 'var(--color-text-1)' },
+                { label: 'Harvest saving',  value: tax.taxLossHarvestingOpportunity, color: 'var(--color-positive)' },
+                { label: 'Pension room',    value: tax.pensionHeadroom, color: 'var(--color-accent)' },
+              ].map(({ label, value, color }) => (
+                <div key={label} style={{ flex: 1, background: 'var(--color-surface-2)', borderRadius: 'var(--r-md)', padding: '10px 12px' }}>
+                  <div style={{ ...sectionLabel, marginBottom: 4, fontSize: 9 }}>{label}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color }}>{fmt(value, true)}</div>
+                </div>
+              ))}
             </div>
 
             {showTax && (
@@ -120,13 +124,12 @@ export default function PortfolioPage() {
                 <div style={{ ...sectionLabel, marginBottom: 10 }}>Optimisations</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
                   {tax.optimizations.map((opt, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--r-md)' }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'var(--color-surface-2)', borderRadius: 'var(--r-md)' }}>
                       <div style={{
-                        fontSize: 11, width: 44, height: 22, borderRadius: 'var(--r-sm)',
-                        background: opt.difficulty === 'easy' ? '#D1FAE5' : opt.difficulty === 'medium' ? '#FEF3C7' : '#FEE2E2',
-                        color: opt.difficulty === 'easy' ? '#059669' : opt.difficulty === 'medium' ? '#D97706' : '#DC2626',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontWeight: 700, flexShrink: 0,
+                        fontSize: 11, padding: '2px 8px', borderRadius: 'var(--r-sm)',
+                        background: opt.difficulty === 'easy' ? 'rgba(52,211,153,0.12)' : opt.difficulty === 'medium' ? 'rgba(245,158,11,0.12)' : 'rgba(248,113,113,0.12)',
+                        color: opt.difficulty === 'easy' ? 'var(--color-positive)' : opt.difficulty === 'medium' ? 'var(--color-neutral)' : 'var(--color-negative)',
+                        fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap',
                       }}>
                         {fmt(opt.saving, true)}
                       </div>
@@ -139,7 +142,7 @@ export default function PortfolioPage() {
                 </div>
 
                 <div style={{ ...sectionLabel, marginTop: 'var(--sp-md)', marginBottom: 'var(--sp-sm)' }}>Deadlines</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {tax.deadlines.slice(0, 3).map((d, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13 }}>
                       <span style={{ color: 'var(--color-text-2)' }}>{d.label}</span>
@@ -167,7 +170,7 @@ export default function PortfolioPage() {
                   <div style={{ fontSize: 12, color: 'var(--color-text-2)', width: 96, flexShrink: 0 }}>
                     {cls.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
                   </div>
-                  <div style={{ flex: 1, height: 4, background: 'rgba(0,0,0,0.06)', borderRadius: 2 }}>
+                  <div style={{ flex: 1, height: 2, background: 'var(--color-surface-2)', borderRadius: 2 }}>
                     <div style={{ width: `${pct}%`, height: '100%', background: 'var(--color-accent)', borderRadius: 2, transition: 'width 0.8s ease' }} />
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--color-text-1)', fontWeight: 600, width: 60, textAlign: 'right', flexShrink: 0 }}>
@@ -187,18 +190,16 @@ export default function PortfolioPage() {
 }
 
 const card: React.CSSProperties = {
-  background: 'var(--color-card)',
-  backdropFilter: 'blur(24px)',
-  WebkitBackdropFilter: 'blur(24px)',
+  background: 'var(--color-surface-1)',
   border: '1px solid var(--color-border)',
   borderRadius: 'var(--r-xl)',
   padding: '18px var(--sp-lg)',
 };
 
 const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 10,
   color: 'var(--color-text-3)',
   fontWeight: 700,
   textTransform: 'uppercase',
-  letterSpacing: 0.7,
+  letterSpacing: 1.0,
 };

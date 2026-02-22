@@ -7,17 +7,17 @@ import AssetPhotoUpload from '@/components/AssetPhotoUpload';
 import type { Asset, AssetClass, Currency } from '@/types';
 
 const CLASS_OPTIONS: { value: AssetClass; label: string; icon: string }[] = [
-  { value: 'real_estate',    label: 'Real Estate',     icon: '🏛' },
-  { value: 'stocks',         label: 'Stocks & ETFs',   icon: '📈' },
-  { value: 'pension',        label: 'Pension',         icon: '◎' },
-  { value: 'private_equity', label: 'Private Equity',  icon: '◈' },
-  { value: 'cars',           label: 'Cars',            icon: '🚗' },
-  { value: 'watches',        label: 'Watches',         icon: '⌚' },
-  { value: 'cash',           label: 'Cash',            icon: '◻' },
-  { value: 'bonds',          label: 'Bonds',           icon: '⊞' },
-  { value: 'crypto',         label: 'Crypto',          icon: '◆' },
-  { value: 'art',            label: 'Art',             icon: '🎨' },
-  { value: 'commodities',    label: 'Commodities',     icon: '◎' },
+  { value: 'real_estate',    label: 'Real Estate',    icon: '△' },
+  { value: 'stocks',         label: 'Stocks & ETFs',  icon: '↗' },
+  { value: 'pension',        label: 'Pension',        icon: '◎' },
+  { value: 'private_equity', label: 'Private Equity', icon: '◇' },
+  { value: 'cars',           label: 'Cars',           icon: '▷' },
+  { value: 'watches',        label: 'Watches',        icon: '◉' },
+  { value: 'cash',           label: 'Cash',           icon: '▭' },
+  { value: 'bonds',          label: 'Bonds',          icon: '▣' },
+  { value: 'crypto',         label: 'Crypto',         icon: '◆' },
+  { value: 'art',            label: 'Art',            icon: '⬡' },
+  { value: 'commodities',    label: 'Commodities',    icon: '○' },
 ];
 
 const CURRENCIES: Currency[] = ['EUR', 'GBP', 'USD', 'CHF'];
@@ -82,65 +82,60 @@ export default function AddAssetPage() {
         <div style={{ paddingTop: 12, marginBottom: 'var(--sp-lg)', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
             onClick={() => router.back()}
-            style={{ background: 'none', border: 'none', color: 'var(--color-text-2)', cursor: 'pointer', fontSize: 14, padding: '4px 0', minHeight: 44 }}
+            style={{ background: 'none', border: 'none', color: 'var(--color-text-2)', cursor: 'pointer', fontSize: 13, minHeight: 44, padding: '0 4px' }}
           >
             ← Back
           </button>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 500, color: 'var(--color-text-1)', margin: 0 }}>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 400, color: 'var(--color-text-1)', margin: 0 }}>
             Add Asset
           </h1>
         </div>
 
         {/* Mode picker */}
         {mode === 'choose' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <button onClick={() => setMode('photo')} style={bigOptionBtn}>
-              <span style={{ fontSize: 28 }}>📷</span>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-1)' }}>Photo or Document</div>
-                <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 3 }}>AI extracts all details automatically</div>
-              </div>
-            </button>
-            <button onClick={() => setMode('manual')} style={bigOptionBtn}>
-              <span style={{ fontSize: 28 }}>✏️</span>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-1)' }}>Enter manually</div>
-                <div style={{ fontSize: 13, color: 'var(--color-text-3)', marginTop: 3 }}>Type in the details yourself</div>
-              </div>
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
+            {[
+              { mode: 'photo' as EntryMode, icon: '◈', title: 'Scan Document or Photo', sub: 'AI extracts all details automatically' },
+              { mode: 'manual' as EntryMode, icon: '◻', title: 'Enter manually', sub: 'Type in the details yourself' },
+            ].map((opt) => (
+              <button key={opt.mode} onClick={() => setMode(opt.mode)} style={bigOptionBtn}>
+                <span style={{ fontSize: 18, color: 'var(--color-accent)', flexShrink: 0 }}>{opt.icon}</span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-1)' }}>{opt.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--color-text-3)', marginTop: 3 }}>{opt.sub}</div>
+                </div>
+              </button>
+            ))}
           </div>
         )}
 
         {/* Photo mode */}
         {mode === 'photo' && (
-          <div style={{ background: 'var(--color-card)', backdropFilter: 'blur(20px)', border: '1px solid var(--color-border)', borderRadius: 'var(--r-xl)' }}>
-            <AssetPhotoUpload
-              onExtracted={handlePhotoExtracted}
-              onCancel={() => setMode('choose')}
-            />
+          <div style={{ background: 'var(--color-surface-1)', border: '1px solid var(--color-border)', borderRadius: 'var(--r-xl)' }}>
+            <AssetPhotoUpload onExtracted={handlePhotoExtracted} onCancel={() => setMode('choose')} />
           </div>
         )}
 
         {/* Manual form */}
         {mode === 'manual' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 
             {/* Asset class */}
             <div style={section}>
               <div style={fieldLabel}>Asset type</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-sm)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {CLASS_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => set('class', opt.value)}
                     style={{
-                      padding: '0 13px', height: 36,
+                      padding: '0 12px', height: 34,
                       borderRadius: 'var(--r-pill)',
                       border: '1px solid',
-                      borderColor: cls === opt.value ? 'var(--color-accent)' : 'var(--color-border-md)',
-                      background: cls === opt.value ? 'var(--color-accent)' : 'rgba(255,255,255,0.7)',
-                      color: cls === opt.value ? '#FFF' : 'var(--color-text-2)',
-                      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                      borderColor: cls === opt.value ? 'var(--color-accent)' : 'var(--color-border)',
+                      background: cls === opt.value ? 'var(--color-accent)' : 'var(--color-surface-2)',
+                      color: cls === opt.value ? '#08090D' : 'var(--color-text-2)',
+                      fontSize: 12, fontWeight: 600, cursor: 'pointer',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -171,8 +166,7 @@ export default function AddAssetPage() {
               <div style={fieldLabel}>Current value</div>
               <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
                 <input
-                  type="number"
-                  placeholder="0"
+                  type="number" placeholder="0"
                   value={form.value ?? ''}
                   onChange={(e) => set('value', e.target.value)}
                   style={{ ...inputStyle, flex: 1 }}
@@ -191,15 +185,14 @@ export default function AddAssetPage() {
             <div style={section}>
               <div style={fieldLabel}>Cost basis (optional)</div>
               <input
-                type="number"
-                placeholder="Original purchase price"
+                type="number" placeholder="Original purchase price"
                 value={form.costBasis ?? ''}
                 onChange={(e) => set('costBasis', e.target.value)}
                 style={inputStyle}
               />
             </div>
 
-            {/* Class-specific metadata */}
+            {/* Class-specific fields */}
             {cls === 'real_estate' && (
               <div style={section}>
                 <div style={fieldLabel}>Property details</div>
@@ -210,7 +203,7 @@ export default function AddAssetPage() {
                     <input type="number" placeholder="Rate %" value={form.metadata?.mortgageRate ?? ''} onChange={(e) => setMeta('mortgageRate', Number(e.target.value))} style={{ ...inputStyle, width: 80, flex: 'none' }} />
                   </div>
                   <input type="date" value={form.metadata?.mortgageExpiry ?? ''} onChange={(e) => setMeta('mortgageExpiry', e.target.value)} style={inputStyle} />
-                  <input type="number" placeholder="Annual costs (insurance, service charge)" value={form.metadata?.annualCosts ?? ''} onChange={(e) => setMeta('annualCosts', Number(e.target.value))} style={inputStyle} />
+                  <input type="number" placeholder="Annual costs" value={form.metadata?.annualCosts ?? ''} onChange={(e) => setMeta('annualCosts', Number(e.target.value))} style={inputStyle} />
                 </div>
               </div>
             )}
@@ -227,7 +220,6 @@ export default function AddAssetPage() {
                     <input type="number" placeholder="Year" value={form.metadata?.year ?? ''} onChange={(e) => setMeta('year', Number(e.target.value))} style={{ ...inputStyle, flex: 1 }} />
                     <input type="number" placeholder="Mileage (km)" value={form.metadata?.mileage ?? ''} onChange={(e) => setMeta('mileage', Number(e.target.value))} style={{ ...inputStyle, flex: 1 }} />
                   </div>
-                  <input type="number" placeholder="Annual insurance" value={form.metadata?.annualInsurance ?? ''} onChange={(e) => setMeta('annualInsurance', Number(e.target.value))} style={inputStyle} />
                 </div>
               </div>
             )}
@@ -240,12 +232,12 @@ export default function AddAssetPage() {
                     <input placeholder="Brand (e.g. Rolex)" value={form.metadata?.brand ?? ''} onChange={(e) => setMeta('brand', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
                     <input placeholder="Reference" value={form.metadata?.reference ?? ''} onChange={(e) => setMeta('reference', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
                   </div>
-                  <div style={{ display: 'flex', gap: 'var(--sp-md)' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-xs)', fontSize: 13, color: 'var(--color-text-2)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--sp-lg)' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-text-2)', cursor: 'pointer' }}>
                       <input type="checkbox" checked={form.metadata?.hasBox ?? false} onChange={(e) => setMeta('hasBox', e.target.checked)} />
                       Box
                     </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-xs)', fontSize: 13, color: 'var(--color-text-2)' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-text-2)', cursor: 'pointer' }}>
                       <input type="checkbox" checked={form.metadata?.hasPapers ?? false} onChange={(e) => setMeta('hasPapers', e.target.checked)} />
                       Papers
                     </label>
@@ -268,7 +260,7 @@ export default function AddAssetPage() {
             <div style={section}>
               <div style={fieldLabel}>Country / Jurisdiction</div>
               <input
-                placeholder="e.g. DE, GB, CH"
+                placeholder="DE · GB · CH"
                 value={form.country ?? ''}
                 onChange={(e) => set('country', e.target.value.toUpperCase())}
                 style={inputStyle}
@@ -276,19 +268,21 @@ export default function AddAssetPage() {
               />
             </div>
 
-            {/* Save button — pill shape, brand blue */}
+            {/* Save */}
             <button
               onClick={save}
               disabled={!canSave || saving}
               style={{
                 width: '100%', height: 52,
-                background: canSave ? 'var(--color-accent)' : '#E2E8F0',
-                color: canSave ? '#FFF' : 'var(--color-text-3)',
-                border: 'none', borderRadius: 'var(--r-pill)',
+                background: canSave ? 'var(--color-accent)' : 'var(--color-surface-2)',
+                color: canSave ? '#08090D' : 'var(--color-text-3)',
+                border: canSave ? 'none' : '1px solid var(--color-border)',
+                borderRadius: 'var(--r-pill)',
                 fontSize: 15, fontWeight: 700,
                 cursor: canSave ? 'pointer' : 'default',
                 marginTop: 'var(--sp-sm)',
-                transition: 'background 0.2s ease',
+                transition: 'all 0.2s ease',
+                letterSpacing: 0.2,
               }}
             >
               {saving ? 'Saving…' : 'Save Asset'}
@@ -301,20 +295,18 @@ export default function AddAssetPage() {
 }
 
 const section: React.CSSProperties = {
-  background: 'var(--color-card)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
+  background: 'var(--color-surface-1)',
   border: '1px solid var(--color-border)',
   borderRadius: 'var(--r-xl)',
   padding: '16px 18px',
 };
 
 const fieldLabel: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 10,
   color: 'var(--color-text-3)',
   fontWeight: 700,
   textTransform: 'uppercase',
-  letterSpacing: 0.7,
+  letterSpacing: 1.0,
   marginBottom: 10,
 };
 
@@ -322,7 +314,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   height: 48,
   padding: '0 14px',
-  background: 'rgba(241,245,249,0.8)',
+  background: 'var(--color-surface-2)',
   border: '1px solid var(--color-border)',
   borderRadius: 'var(--r-md)',
   fontSize: 14,
@@ -337,13 +329,12 @@ const bigOptionBtn: React.CSSProperties = {
   alignItems: 'center',
   gap: 'var(--sp-md)',
   padding: 'var(--sp-lg)',
-  background: 'var(--color-card)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
+  background: 'var(--color-surface-1)',
   border: '1px solid var(--color-border)',
   borderRadius: 'var(--r-xl)',
   cursor: 'pointer',
   textAlign: 'left',
   width: '100%',
-  minHeight: 80,
+  minHeight: 76,
+  transition: 'border-color 0.15s ease',
 };

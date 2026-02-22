@@ -4,33 +4,39 @@
   padding: 0;
 }
 
-/* ── Design Tokens ──────────────────────────────────────────────── */
+/* ── Design Tokens — Dark Luxury ───────────────────────────────── */
 :root {
   --font-serif: 'Instrument Serif', Georgia, serif;
-  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-  /* Brand */
-  --color-accent:    #1A56DB;
-  --color-accent-bg: rgba(26, 86, 219, 0.08);
-
-  /* Finance semantics */
-  --color-positive:  #10B981;
-  --color-negative:  #EF4444;
-  --color-neutral:   #F59E0B;
+  --font-sans:  'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
   /* Backgrounds */
-  --color-bg:        #F8FAFC;
-  --color-card:      rgba(255, 255, 255, 0.80);
-  --color-card-solid:#FFFFFF;
-
-  /* Text */
-  --color-text-1:    #0F172A;
-  --color-text-2:    #64748B;
-  --color-text-3:    #94A3B8;
+  --color-bg:         #08090D;
+  --color-surface-1:  #0E1017;   /* cards */
+  --color-surface-2:  #141720;   /* elevated / hover */
+  --color-surface-3:  #1C2030;   /* highest elevation */
 
   /* Borders */
-  --color-border:    rgba(0, 0, 0, 0.07);
-  --color-border-md: rgba(0, 0, 0, 0.10);
+  --color-border:     rgba(255, 255, 255, 0.07);
+  --color-border-md:  rgba(255, 255, 255, 0.13);
+
+  /* Text */
+  --color-text-1:  rgba(255, 255, 255, 0.92);
+  --color-text-2:  rgba(255, 255, 255, 0.45);
+  --color-text-3:  rgba(255, 255, 255, 0.24);
+
+  /* Accent — champagne gold */
+  --color-accent:    #C8A96E;
+  --color-accent-bg: rgba(200, 169, 110, 0.10);
+
+  /* Finance semantics */
+  --color-positive: #34D399;
+  --color-negative: #F87171;
+  --color-neutral:  #F59E0B;
+
+  /* Aliases expected by components */
+  --color-bg:         #08090D;
+  --color-card:       #0E1017;
+  --color-card-solid: #141720;
 
   /* Radius */
   --r-sm:   8px;
@@ -39,7 +45,7 @@
   --r-xl:   20px;
   --r-pill: 100px;
 
-  /* Spacing (4-pt grid) */
+  /* Spacing — 4-pt grid */
   --sp-xs:  4px;
   --sp-sm:  8px;
   --sp-md:  16px;
@@ -51,6 +57,7 @@
 /* ── Base ───────────────────────────────────────────────────────── */
 html {
   -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
 }
 
 body {
@@ -67,6 +74,11 @@ html, body { overflow-x: hidden; }
 input, select, textarea, button {
   font-family: inherit;
   font-size: inherit;
+  color-scheme: dark;
+}
+
+::placeholder {
+  color: var(--color-text-3);
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -75,11 +87,15 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(26, 86, 219, 0.45);
+  outline: 1.5px solid rgba(200, 169, 110, 0.55);
   outline-offset: 2px;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 2px; }
+
+/* ── Active press feedback ──────────────────────────────────────── */
+button:active { opacity: 0.80; }
+a:active { opacity: 0.80; }
