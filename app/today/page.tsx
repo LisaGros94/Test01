@@ -79,12 +79,8 @@ export default function TodayPage() {
             position: 'relative',
             overflow: 'hidden',
           }}>
-            {/* Subtle gold glow top-right */}
-            <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: 'rgba(200,169,110,0.05)', pointerEvents: 'none' }} />
-
             <div style={{ position: 'relative', zIndex: 1 }}>
-              {/* Label in gold */}
-              <div style={{ fontSize: 10, color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 700, marginBottom: 10, opacity: 0.75 }}>
+              <div style={{ fontSize: 10, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 700, marginBottom: 10 }}>
                 {netWorthFrame.label}
               </div>
 

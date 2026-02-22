@@ -12,7 +12,7 @@ export default function AdvisorPage() {
   }, []);
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#F8FAFC', paddingTop: 56, paddingBottom: 60 }}>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--color-bg)', paddingTop: 56, paddingBottom: 60 }}>
       <AdvisorChat />
     </div>
   );

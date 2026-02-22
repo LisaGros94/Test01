@@ -24,9 +24,9 @@
   --color-text-2:  rgba(255, 255, 255, 0.45);
   --color-text-3:  rgba(255, 255, 255, 0.24);
 
-  /* Accent — champagne gold */
-  --color-accent:    #C8A96E;
-  --color-accent-bg: rgba(200, 169, 110, 0.10);
+  /* Accent — clean white */
+  --color-accent:    #FFFFFF;
+  --color-accent-bg: rgba(255, 255, 255, 0.07);
 
   /* Finance semantics */
   --color-positive: #34D399;

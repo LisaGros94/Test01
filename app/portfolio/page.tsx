@@ -58,9 +58,7 @@ export default function PortfolioPage() {
           marginBottom: 'var(--sp-sm)',
           position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -60, right: -60, width: 180, height: 180, borderRadius: '50%', background: 'rgba(200,169,110,0.04)', pointerEvents: 'none' }} />
-
-          <div style={{ fontSize: 10, color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 700, marginBottom: 10, opacity: 0.75 }}>
+          <div style={{ fontSize: 10, color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 700, marginBottom: 10 }}>
             Total Net Worth
           </div>
           <div style={{ fontFamily: 'var(--font-serif)', fontSize: 40, color: 'var(--color-text-1)', fontWeight: 400, marginBottom: 18, letterSpacing: -0.5 }}>
