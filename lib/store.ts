@@ -295,7 +295,7 @@ export const useStore = create<ClarityStore>()(
       portfolio: null,
       profile: {
         id: 'user-1',
-        name: 'Alexander',
+        name: 'Max',
         country: 'DE',
         baseCurrency: 'EUR',
         retirementAge: 58,
