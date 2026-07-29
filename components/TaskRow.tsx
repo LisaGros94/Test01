@@ -58,6 +58,19 @@ export function TaskRow({
         }`}
       />
 
+      {/* One-click complete / reopen. */}
+      <button
+        title={task.status === 'Done' ? 'Reopen' : 'Mark done'}
+        onClick={(e) => { e.stopPropagation(); patchTask(task.id, { status: task.status === 'Done' ? 'In progress' : 'Done' }); }}
+        className={`grid h-4 w-4 shrink-0 place-items-center rounded-full border text-[9px] transition ${
+          task.status === 'Done'
+            ? 'border-[var(--color-green)] bg-[var(--color-green)] text-white'
+            : 'border-[var(--color-border-strong)] text-transparent hover:border-[var(--color-green)] hover:text-[var(--color-green)]'
+        }`}
+      >
+        ✓
+      </button>
+
       <div onClick={(e) => e.stopPropagation()}>
         <PriorityBadge task={task} />
       </div>

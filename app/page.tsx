@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useApp } from '@/lib/client/store';
 import { TaskList } from '@/components/TaskList';
+import { AttentionBand } from '@/components/AttentionBand';
 import { matchesQuery, byDeadline } from '@/lib/client/filter';
 
 export default function MyTasksPage() {
@@ -17,10 +18,11 @@ export default function MyTasksPage() {
 
   return (
     <div>
-      <div className="flex items-baseline justify-between px-4 py-3">
+      <div className="flex items-baseline justify-between px-4 pb-1 pt-3">
         <h1 className="text-[15px] font-semibold">My tasks</h1>
         <span className="text-[12px] text-[var(--color-ink-3)]">{mine.length} tasks · sorted by deadline</span>
       </div>
+      <AttentionBand />
       <TaskList tasks={mine} groupBy="status" emptyLabel="You're all clear. Press C to add a task." />
     </div>
   );

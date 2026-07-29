@@ -68,7 +68,7 @@ export function Dropdown({
         <div
           onClick={(e) => e.stopPropagation()}
           style={{ width, [align]: 0 } as React.CSSProperties}
-          className="absolute z-40 mt-1 rounded-lg border border-[var(--color-border-strong)] bg-white p-1 shadow-lg"
+          className="absolute z-40 mt-1 rounded-xl border border-[var(--color-border-strong)] bg-white p-1 shadow-[var(--shadow-pop)] anim-pop"
         >
           {children(() => setOpen(false))}
         </div>
@@ -103,7 +103,7 @@ export function Toast({ toast }: { toast: { kind: 'error' | 'ok'; text: string }
   if (!toast) return null;
   return (
     <div
-      className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-lg border px-4 py-2 text-[13px] shadow-lg"
+      className="fixed bottom-5 left-1/2 z-[70] -translate-x-1/2 rounded-lg border px-4 py-2 text-[13px] shadow-[var(--shadow-pop)] anim-toast"
       style={{
         background: toast.kind === 'error' ? 'var(--color-alert-bg)' : '#fff',
         borderColor: toast.kind === 'error' ? 'var(--color-alert)' : 'var(--color-border-strong)',

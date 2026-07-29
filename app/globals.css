@@ -4,21 +4,26 @@
    Blanche Tracker — restrained, typographic, dense. Closer to Linear than
    Trello: one calm surface, generous line height, subtle status tints, and a
    single strong accent reserved for the things that actually need chasing
-   (overdue, blocked).
+   (overdue, blocked). One quiet brand indigo carries interaction/focus.
    ───────────────────────────────────────────────────────────────────────────── */
 
 @theme {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
-  --color-bg: #fbfbfa;
+  --color-bg: #fafaf9;
   --color-surface: #ffffff;
-  --color-surface-2: #f5f5f4;
+  --color-surface-2: #f4f4f2;
+  --color-surface-3: #ececea;
   --color-border: #ececeb;
   --color-border-strong: #dcdcda;
 
-  --color-ink: #1c1c1a;
-  --color-ink-2: #6a6a66;
-  --color-ink-3: #9a9a95;
+  --color-ink: #1b1b19;
+  --color-ink-2: #66665f;
+  --color-ink-3: #9a9a93;
+
+  /* Quiet brand — interaction, focus, active nav. Never decorative. */
+  --color-brand: #5b5bd6;
+  --color-brand-bg: #eeeefb;
 
   /* The single strong accent — used only for overdue / blocked urgency. */
   --color-alert: #d1332e;
@@ -31,49 +36,44 @@
   --color-amber-bg: #f8f0e3;
   --color-green: #2f7d47;
   --color-green-bg: #ecf4ee;
-  --color-gray: #6a6a66;
-  --color-gray-bg: #f0f0ef;
+  --color-gray: #66665f;
+  --color-gray-bg: #efefed;
+
+  --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 28px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 * {
   box-sizing: border-box;
 }
-
 html,
 body {
   margin: 0;
   padding: 0;
 }
-
 body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 13.5px;
-  line-height: 1.65;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-
 ::selection {
-  background: #1c1c1a;
+  background: #1b1b19;
   color: #fff;
 }
 
-/* Status tint helpers — subtle background + readable foreground. */
+/* Status tint helpers. */
 .tint-notstarted { background: var(--color-gray-bg); color: var(--color-gray); }
 .tint-inprogress { background: var(--color-blue-bg); color: var(--color-blue); }
 .tint-blocked    { background: var(--color-alert-bg); color: var(--color-alert); }
 .tint-waiting    { background: var(--color-amber-bg); color: var(--color-amber); }
 .tint-done       { background: var(--color-green-bg); color: var(--color-green); }
 
-/* Left border accent for rows that need attention. */
 .row-urgent { box-shadow: inset 2px 0 0 var(--color-alert); }
-
-.focus-row {
-  background: var(--color-surface-2);
-  box-shadow: inset 2px 0 0 var(--color-ink);
-}
+.focus-row  { background: var(--color-surface-2); box-shadow: inset 2px 0 0 var(--color-ink); }
 
 kbd {
   font-family: var(--font-sans);
@@ -87,9 +87,22 @@ kbd {
   line-height: 1;
 }
 
-/* Thin, quiet scrollbars. */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #e0e0de; border-radius: 6px; border: 3px solid var(--color-bg); }
 ::-webkit-scrollbar-thumb:hover { background: #cfcfcc; }
-
 input, textarea, select, button { font: inherit; color: inherit; }
+
+button, a, .transitionable { transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease; }
+
+/* Motion. */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { transform: translateX(16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes popIn { from { transform: translateY(-6px) scale(0.985); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes toastUp { from { transform: translate(-50%, 10px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.anim-fade  { animation: fadeIn 0.14s ease; }
+.anim-slide { animation: slideIn 0.18s cubic-bezier(0.22, 1, 0.36, 1); }
+.anim-pop   { animation: popIn 0.14s cubic-bezier(0.22, 1, 0.36, 1); }
+.anim-toast { animation: toastUp 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade, .anim-slide, .anim-pop, .anim-toast { animation: none; }
+}

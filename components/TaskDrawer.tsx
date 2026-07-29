@@ -23,8 +23,8 @@ export function TaskDrawer() {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/10" onClick={() => openTask(null)} />
-      <aside className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[520px] flex-col border-l border-[var(--color-border-strong)] bg-white shadow-2xl">
+      <div className="fixed inset-0 z-40 bg-black/15 anim-fade" onClick={() => openTask(null)} />
+      <aside className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[520px] flex-col border-l border-[var(--color-border-strong)] bg-white shadow-2xl anim-slide">
         {task ? <DrawerBody task={task} /> : <div className="p-6 text-[13px] text-[var(--color-ink-3)]">Task not found.</div>}
       </aside>
     </>
