@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store";
-import { daysFromNow, daysSince, isOpen, isOverdue, onTimeRate, onTimeWeekly, personName, todayISO } from "../lib";
-import { DueTag, SectionLabel, Sparkline, StatusTag } from "../ui";
+import { daysFromNow, daysSince, fmtMetric, isOpen, isOverdue, onTimeRate, onTimeWeekly, personName, todayISO } from "../lib";
+import { DueTag, KpiTile, SectionLabel, Sparkline, StatusTag } from "../ui";
 import CommitmentPanel from "../CommitmentPanel";
 
 export default function Home() {
@@ -65,6 +65,40 @@ export default function Home() {
             <Sparkline values={onTimeWeekly(state.commitments)} width={160} height={32} />
             <span className="label text-mid">Weekly, 8 weeks</span>
           </div>
+        </div>
+      </section>
+
+      {/* Focus KPIs — mirrored from Numbers */}
+      <section className="mb-16">
+        <div className="mb-4 flex items-baseline justify-between">
+          <SectionLabel>Focus KPIs</SectionLabel>
+          <Link to="/numbers" className="label text-mid transition-opacity hover:text-ink">
+            All numbers →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
+          {state.metrics
+            .filter((m) => m.focus)
+            .map((m) => {
+              const now = m.history[m.history.length - 1];
+              const prior = m.history[m.history.length - 2];
+              const delta = now && prior ? now.value - prior.value : null;
+              return (
+                <KpiTile
+                  key={m.id}
+                  name={m.name}
+                  value={now ? fmtMetric(now.value, m.unit) : "—"}
+                  delta={
+                    delta === null
+                      ? null
+                      : `${delta >= 0 ? "+" : ""}${fmtMetric(delta, m.unit)} vs last week`
+                  }
+                  target={m.target !== null ? `Target ${fmtMetric(m.target, m.unit)}` : null}
+                  values={m.history.map((h) => h.value)}
+                  meta={`${personName(state, m.ownerId)} · updated ${daysSince(m.updatedAt)}d ago`}
+                />
+              );
+            })}
         </div>
       </section>
 

@@ -31,6 +31,9 @@ function load(): State {
       const fresh = seed();
       if (!parsed.knowledgeLinks) parsed.knowledgeLinks = fresh.knowledgeLinks;
       if (!parsed.metrics) parsed.metrics = fresh.metrics;
+      parsed.metrics = parsed.metrics.map((m) =>
+        m.id === "m1" || m.id === "m2" ? { ...m, focus: true } : m
+      );
       for (const c of fresh.commitments) {
         if (!parsed.commitments.some((x) => x.id === c.id) && c.status === "done") {
           parsed.commitments.push(c); // backfill trend history

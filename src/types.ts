@@ -95,6 +95,8 @@ export interface Metric {
   ownerId: string;
   updatedAt: string; // ISO — stale after 14 days
   history: MetricPoint[]; // trailing 12 weeks
+  /** Focus KPIs get headline treatment on Today and atop Numbers. */
+  focus?: boolean;
 }
 
 export interface State {

@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { useStore } from "../store";
-import { daysSince, personName } from "../lib";
-import { SectionLabel, Sparkline } from "../ui";
+import { daysSince, fmtMetric as fmt, personName } from "../lib";
+import { KpiTile, SectionLabel, Sparkline } from "../ui";
 
 const STALE_DAYS = 14;
-
-function fmt(value: number, unit: string): string {
-  return unit === "£k" ? `£${value}k` : `${value}${unit}`;
-}
 
 /**
  * Numbers — one page, ~eight metrics, one source of truth, updated weekly
@@ -43,6 +39,36 @@ export default function Numbers() {
         </p>
       </header>
 
+      {/* Focus KPIs — the two numbers the company is actually steering by */}
+      <section className="mb-16">
+        <SectionLabel>Focus</SectionLabel>
+        <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
+          {state.metrics
+            .filter((m) => m.focus)
+            .map((m) => {
+              const now = m.history[m.history.length - 1];
+              const prior = m.history[m.history.length - 2];
+              const delta = now && prior ? now.value - prior.value : null;
+              return (
+                <KpiTile
+                  key={m.id}
+                  name={m.name}
+                  value={now ? fmt(now.value, m.unit) : "—"}
+                  delta={
+                    delta === null
+                      ? null
+                      : `${delta >= 0 ? "+" : ""}${fmt(delta, m.unit)} vs last week`
+                  }
+                  target={m.target !== null ? `Target ${fmt(m.target, m.unit)}` : null}
+                  values={m.history.map((h) => h.value)}
+                  meta={`${personName(state, m.ownerId)} · updated ${daysSince(m.updatedAt)}d ago`}
+                />
+              );
+            })}
+        </div>
+      </section>
+
+      <SectionLabel>All metrics</SectionLabel>
       <div className="hairline-b hidden gap-6 pb-2 lg:flex">
         <span className="label flex-1 text-mid">Metric</span>
         <span className="label w-32 text-mid">12 weeks</span>

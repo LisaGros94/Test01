@@ -211,10 +211,10 @@ export function seed(): State {
     new Date(Date.now() - daysAgo * 86400000).toISOString();
 
   const metrics = [
-    { id: "m1", name: "Waitlist signups", unit: "", target: 500, ownerId: "p5", updatedAt: updated(2),
+    { id: "m1", name: "Waitlist signups", unit: "", target: 500, ownerId: "p5", updatedAt: updated(2), focus: true,
       definition: "Unique emails on the holding-page waitlist, cumulative. Deduplicated, team and investor emails excluded.",
       history: hist([48, 64, 79, 102, 118, 141, 163, 189, 214, 246, 271, 293]) },
-    { id: "m2", name: "Design partner interviews", unit: "/wk", target: 5, ownerId: "p3", updatedAt: updated(2),
+    { id: "m2", name: "Design partner interviews", unit: "/wk", target: 5, ownerId: "p3", updatedAt: updated(2), focus: true,
       definition: "Completed discovery or prototype sessions this week with a named advisor or client-side participant.",
       history: hist([0, 1, 1, 2, 2, 3, 2, 4, 3, 4, 5, 4]) },
     { id: "m3", name: "Prototype sessions", unit: "/wk", target: 10, ownerId: "p6", updatedAt: updated(9),

@@ -101,6 +101,37 @@ export function Sparkline({
   );
 }
 
+export function KpiTile({
+  name,
+  value,
+  delta,
+  target,
+  values,
+  meta,
+}: {
+  name: string;
+  value: string;
+  delta: string | null;
+  target: string | null;
+  values: (number | null)[];
+  meta?: string;
+}) {
+  return (
+    <div className="hairline-t pt-5">
+      <div className="label text-mid">{name}</div>
+      <div className="mt-4 flex items-end justify-between gap-8">
+        <span className="text-[42px] leading-none tracking-tight">{value}</span>
+        <Sparkline values={values} width={180} height={40} />
+      </div>
+      <div className="mt-4 flex items-baseline justify-between gap-6">
+        <span className="text-mid">{delta ?? ""}</span>
+        {target && <span className="label text-mid">{target}</span>}
+      </div>
+      {meta && <div className="label mt-1 text-mid">{meta}</div>}
+    </div>
+  );
+}
+
 export function EmptyState({ title, hint }: { title: string; hint: string }) {
   return (
     <div className="fade-in py-24 text-center">

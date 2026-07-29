@@ -43,6 +43,10 @@ export function onTimeWeekly(
   return out;
 }
 
+export function fmtMetric(value: number, unit: string): string {
+  return unit === "£k" ? `£${value}k` : `${value}${unit}`;
+}
+
 export function daysSince(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
 }
