@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store";
-import { daysFromNow, isOpen, isOverdue, onTimeRate, personName, todayISO } from "../lib";
-import { DueTag, SectionLabel, StatusTag } from "../ui";
+import { daysFromNow, daysSince, isOpen, isOverdue, onTimeRate, onTimeWeekly, personName, todayISO } from "../lib";
+import { DueTag, SectionLabel, Sparkline, StatusTag } from "../ui";
 import CommitmentPanel from "../CommitmentPanel";
 
 export default function Home() {
@@ -60,6 +60,10 @@ export default function Home() {
             <div className="mt-1 text-mid">
               Trailing eight weeks, team-wide. {rate.n} commitment{rate.n === 1 ? "" : "s"} closed.
             </div>
+          </div>
+          <div className="hidden flex-col items-end gap-1 md:flex">
+            <Sparkline values={onTimeWeekly(state.commitments)} width={160} height={32} />
+            <span className="label text-mid">Weekly, 8 weeks</span>
           </div>
         </div>
       </section>
@@ -141,6 +145,19 @@ export default function Home() {
               {unownedCount} commitment{unownedCount === 1 ? "" : "s"} without an owner or a date
             </span>
             <span className="label text-mid">Unowned →</span>
+          </Link>
+          <Link to="/numbers" className="hairline-b hover-tint flex items-center justify-between py-3">
+            {(() => {
+              const stale = state.metrics.filter((m) => daysSince(m.updatedAt) > 14).length;
+              return (
+                <>
+                  <span className={stale ? "text-oxblood" : "text-mid"}>
+                    {stale === 0 ? "All metrics current" : `${stale} metric${stale === 1 ? "" : "s"} stale past 14 days`}
+                  </span>
+                  <span className="label text-mid">Numbers →</span>
+                </>
+              );
+            })()}
           </Link>
           <div className="hairline-b flex items-center justify-between py-3">
             <span className="text-mid">Workstreams active</span>

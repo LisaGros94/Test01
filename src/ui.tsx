@@ -70,6 +70,37 @@ export function Kbd({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Twelve-week sparkline, nothing more elaborate. Ink line, square end point. */
+export function Sparkline({
+  values,
+  width = 120,
+  height = 26,
+}: {
+  values: (number | null)[];
+  width?: number;
+  height?: number;
+}) {
+  const pts = values
+    .map((v, i) => ({ v, i }))
+    .filter((p): p is { v: number; i: number } => p.v !== null);
+  if (pts.length < 2)
+    return <span className="label text-mid">—</span>;
+  const min = Math.min(...pts.map((p) => p.v));
+  const max = Math.max(...pts.map((p) => p.v));
+  const span = max - min || 1;
+  const pad = 3;
+  const x = (i: number) => (i / (values.length - 1)) * (width - 2 * pad) + pad;
+  const y = (v: number) => height - pad - ((v - min) / span) * (height - 2 * pad);
+  const path = pts.map((p, k) => `${k === 0 ? "M" : "L"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
+  const last = pts[pts.length - 1];
+  return (
+    <svg width={width} height={height} className="shrink-0" aria-hidden>
+      <path d={path} fill="none" stroke="var(--ink)" strokeWidth="1" />
+      <rect x={x(last.i) - 1.5} y={y(last.v) - 1.5} width="3" height="3" fill="var(--ink)" />
+    </svg>
+  );
+}
+
 export function EmptyState({ title, hint }: { title: string; hint: string }) {
   return (
     <div className="fade-in py-24 text-center">

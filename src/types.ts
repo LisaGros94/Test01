@@ -80,6 +80,23 @@ export interface KnowledgeLink {
   note: string;
 }
 
+export interface MetricPoint {
+  weekOf: string; // Monday, YYYY-MM-DD
+  value: number;
+}
+
+export interface Metric {
+  id: string;
+  name: string;
+  /** Arguments about what "active user" means cost weeks — write it down once. */
+  definition: string;
+  unit: string; // "", "£k", "mo", "%"
+  target: number | null;
+  ownerId: string;
+  updatedAt: string; // ISO — stale after 14 days
+  history: MetricPoint[]; // trailing 12 weeks
+}
+
 export interface State {
   people: Person[];
   meId: string;
@@ -87,6 +104,7 @@ export interface State {
   commitments: Commitment[];
   tasks: Task[];
   knowledgeLinks: KnowledgeLink[];
+  metrics: Metric[];
 }
 
 export const STATUSES: { value: Status; label: string }[] = [

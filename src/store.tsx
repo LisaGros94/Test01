@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Commitment, KnowledgeLink, State, Status, Task } from "./types";
 import { seed } from "./seed";
-import { todayISO, uid } from "./lib";
+import { todayISO, uid, weekOf } from "./lib";
 import { STATUS_LABEL } from "./types";
 
 const KEY = "blanche-hq-v1";
@@ -16,6 +16,7 @@ interface Store {
   bulkUpdate: (ids: string[], patch: Partial<Commitment>, log: string) => void;
   addKnowledgeLink: (input: Omit<KnowledgeLink, "id">) => void;
   removeKnowledgeLink: (id: string) => void;
+  recordMetric: (id: string, value: number) => void;
   resetDemo: () => void;
 }
 
@@ -26,8 +27,15 @@ function load(): State {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as State;
-      // Migrate stores saved before the knowledge base existed
-      if (!parsed.knowledgeLinks) parsed.knowledgeLinks = seed().knowledgeLinks;
+      // Migrate stores saved before newer modules existed
+      const fresh = seed();
+      if (!parsed.knowledgeLinks) parsed.knowledgeLinks = fresh.knowledgeLinks;
+      if (!parsed.metrics) parsed.metrics = fresh.metrics;
+      for (const c of fresh.commitments) {
+        if (!parsed.commitments.some((x) => x.id === c.id) && c.status === "done") {
+          parsed.commitments.push(c); // backfill trend history
+        }
+      }
       return parsed;
     }
   } catch {
@@ -152,6 +160,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setState((s) => ({
           ...s,
           knowledgeLinks: s.knowledgeLinks.filter((k) => k.id !== id),
+        })),
+      recordMetric: (id, value) =>
+        setState((s) => ({
+          ...s,
+          metrics: s.metrics.map((m) => {
+            if (m.id !== id) return m;
+            const wk = weekOf(new Date());
+            const history = m.history.some((h) => h.weekOf === wk)
+              ? m.history.map((h) => (h.weekOf === wk ? { ...h, value } : h))
+              : [...m.history.slice(-11), { weekOf: wk, value }];
+            return { ...m, history, updatedAt: new Date().toISOString() };
+          }),
         })),
       resetDemo: () => {
         localStorage.removeItem(KEY);

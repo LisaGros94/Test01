@@ -8,6 +8,45 @@ export function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+/** Monday of the week containing the given date, YYYY-MM-DD. */
+export function weekOf(d: Date): string {
+  const copy = new Date(d);
+  copy.setDate(copy.getDate() - ((copy.getDay() + 6) % 7));
+  return copy.toISOString().slice(0, 10);
+}
+
+/** Weekly on-time % over the trailing N weeks; null for weeks with no closes. */
+export function onTimeWeekly(
+  commitments: Commitment[],
+  weeks = 8
+): (number | null)[] {
+  const out: (number | null)[] = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    const start = daysFromNow(-7 * (i + 1));
+    const end = daysFromNow(-7 * i);
+    const closed = commitments.filter(
+      (c) =>
+        c.status === "done" &&
+        c.completedAt &&
+        c.completedAt.slice(0, 10) > start &&
+        c.completedAt.slice(0, 10) <= end
+    );
+    if (closed.length === 0) {
+      out.push(null);
+      continue;
+    }
+    const onTime = closed.filter(
+      (c) => !c.originalDueDate || c.completedAt!.slice(0, 10) <= c.originalDueDate
+    );
+    out.push(Math.round((onTime.length / closed.length) * 100));
+  }
+  return out;
+}
+
+export function daysSince(iso: string): number {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+}
+
 export function daysFromNow(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() + n);

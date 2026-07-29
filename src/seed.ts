@@ -1,5 +1,5 @@
 import type { State } from "./types";
-import { daysFromNow, uid } from "./lib";
+import { daysFromNow, uid, weekOf } from "./lib";
 
 /**
  * Seed data — every module ships with worked examples so empty states teach.
@@ -124,6 +124,23 @@ export function seed(): State {
       ownerId: "p6", dueDate: null, status: "not_started",
       labels: ["product", "engineering"],
     }),
+    // Closed over the trailing weeks — this history powers the on-time trend
+    ...([
+      { id: "c14", workstreamId: "w5", title: "Company incorporated, board minutes filed", labels: ["legal"], daysAgo: 54, late: false, ownerId: "p1" },
+      { id: "c15", workstreamId: "w5", title: "Business banking and expense cards live", labels: ["ops"], daysAgo: 48, late: false, ownerId: "p2" },
+      { id: "c16", workstreamId: "w1", title: "Seed narrative deck v2", labels: ["fundraise"], daysAgo: 41, late: true, ownerId: "p1" },
+      { id: "c17", workstreamId: "w2", title: "Design partner outreach list — 100 names", labels: ["research"], daysAgo: 33, late: false, ownerId: "p3" },
+      { id: "c18", workstreamId: "w2", title: "First three design partner calls done", labels: ["research"], daysAgo: 26, late: false, ownerId: "p6" },
+      { id: "c19", workstreamId: "w4", title: "Careers page live with first two roles", labels: ["hiring", "brand"], daysAgo: 19, late: true, ownerId: "p5" },
+      { id: "c20", workstreamId: "w5", title: "Option pool board resolution drafted", labels: ["equity", "legal"], daysAgo: 13, late: false, ownerId: "p4" },
+    ] as const).map((d) =>
+      c({
+        id: d.id, workstreamId: d.workstreamId, title: d.title,
+        ownerId: d.ownerId, labels: [...d.labels], status: "done",
+        dueDate: daysFromNow(-d.daysAgo + (d.late ? -3 : 1)),
+        completedAt: new Date(Date.now() - d.daysAgo * 86400000).toISOString(),
+      })
+    ),
     c({
       id: "c13", workstreamId: "w1", title: "First investor update sent",
       description: "Monthly cadence starts the week the round closes. Template agreed.",
@@ -184,5 +201,41 @@ export function seed(): State {
     { id: "k10", section: "Legal & entity", title: "Entity structure & key documents", url: "https://drive.google.com/drive/folders/legal", ownerId: "p4", note: "Where the company is incorporated and where the signed documents live." },
   ];
 
-  return { people, meId: "p1", workstreams, commitments, tasks, knowledgeLinks };
+  // Numbers — eight metrics, manual entry, one named owner each.
+  const weeks = Array.from({ length: 12 }, (_, i) =>
+    weekOf(new Date(Date.now() - (11 - i) * 7 * 86400000))
+  );
+  const hist = (values: number[]) =>
+    weeks.map((weekOfWk, i) => ({ weekOf: weekOfWk, value: values[i] }));
+  const updated = (daysAgo: number) =>
+    new Date(Date.now() - daysAgo * 86400000).toISOString();
+
+  const metrics = [
+    { id: "m1", name: "Waitlist signups", unit: "", target: 500, ownerId: "p5", updatedAt: updated(2),
+      definition: "Unique emails on the holding-page waitlist, cumulative. Deduplicated, team and investor emails excluded.",
+      history: hist([48, 64, 79, 102, 118, 141, 163, 189, 214, 246, 271, 293]) },
+    { id: "m2", name: "Design partner interviews", unit: "/wk", target: 5, ownerId: "p3", updatedAt: updated(2),
+      definition: "Completed discovery or prototype sessions this week with a named advisor or client-side participant.",
+      history: hist([0, 1, 1, 2, 2, 3, 2, 4, 3, 4, 5, 4]) },
+    { id: "m3", name: "Prototype sessions", unit: "/wk", target: 10, ownerId: "p6", updatedAt: updated(9),
+      definition: "Distinct sessions in the clickable prototype, excluding the team. A session is 2+ minutes of activity.",
+      history: hist([0, 0, 0, 0, 3, 5, 4, 7, 6, 9, 8, 11]) },
+    { id: "m4", name: "Runway", unit: "mo", target: 18, ownerId: "p1", updatedAt: updated(2),
+      definition: "Months of runway at current monthly burn, counting only cash in the bank — committed-not-wired excluded.",
+      history: hist([14, 14, 13, 13, 13, 12, 12, 12, 20, 20, 19, 19]) },
+    { id: "m5", name: "Monthly burn", unit: "£k", target: 45, ownerId: "p2", updatedAt: updated(2),
+      definition: "Total cash out per calendar month: payroll, contractors, tools, legal. Target is a ceiling, not a goal.",
+      history: hist([28, 28, 30, 31, 31, 33, 34, 36, 38, 39, 41, 42]) },
+    { id: "m6", name: "Candidates in final loop", unit: "", target: 3, ownerId: "p2", updatedAt: updated(16),
+      definition: "Candidates for open roles who have completed the penultimate interview. Pipeline, not offers.",
+      history: hist([0, 0, 1, 1, 2, 1, 1, 2, 2, 3, 2, 2]) },
+    { id: "m7", name: "Active investor conversations", unit: "", target: 12, ownerId: "p1", updatedAt: updated(5),
+      definition: "Funds or angels with a live thread: meeting held or scheduled within 14 days. Cold outreach doesn't count.",
+      history: hist([4, 6, 9, 11, 14, 15, 13, 12, 10, 8, 7, 6]) },
+    { id: "m8", name: "Regulatory milestones cleared", unit: "/6", target: 6, ownerId: "p4", updatedAt: updated(21),
+      definition: "Of the six pre-licence milestones in the perimeter memo: counsel appointed, memo signed, entity scoped, etc.",
+      history: hist([0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3]) },
+  ];
+
+  return { people, meId: "p1", workstreams, commitments, tasks, knowledgeLinks, metrics };
 }
