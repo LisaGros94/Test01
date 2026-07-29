@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blanche HQ
 
-## Getting Started
+Internal operating system for Blanche. Work module v1 — commitments, tasks, and the discipline around them.
 
-First, run the development server:
+## What's here (V1, Work module)
 
-```bash
+- **Today** — the one number (% delivered on the *original* due date, trailing 8 weeks, team-wide only, never per person), overdue, due this week, shipped this week, hygiene.
+- **Work** — commitments across workstreams. List and board views, drag between statuses, free-form label filters, bulk edit (reassign / reschedule / set status).
+- **Mine** — everything assigned to you, sorted by due date, one screen.
+- **Unowned** — anything without an owner or a date. Visible and slightly embarrassing, with a one-click Claim.
+- **Commitment panel** — tasks with one-key done, comments, full activity trail, original-due-date tracking.
+- **Keyboard-first** — `⌘K` search, `c` create, `/` search, `j`/`k` move, `x` select, `Enter` open, `g` then `w`/`m`/`u`/`h` to navigate.
+
+## Design
+
+Byredo-quiet: Jost, paper white `#FAFAFA`, ink `#141414`, one grey-blue tint, hairline rules, no shadows, no radius above 2px, no accent colour. Overdue is the only exception — muted oxblood, used nowhere else. The typeface and palette live as CSS variables in `src/index.css`.
+
+## Run
+
+```
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Vite + React + TypeScript + Tailwind. No server.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Current state and next steps
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Data is client-side (localStorage) with seeded example content so the team can feel the workflows immediately — the store in `src/store.tsx` is a single seam, designed to be swapped for Supabase (Postgres + RLS + Google-domain SSO) without touching the UI. Next per the build order: Supabase persistence and auth, then Slack (`/hq` commands, batched DMs, Monday digest).
