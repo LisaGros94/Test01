@@ -71,12 +71,22 @@ export interface Task {
   comments: Comment[];
 }
 
+export interface KnowledgeLink {
+  id: string;
+  section: string;
+  title: string;
+  url: string;
+  ownerId: string;
+  note: string;
+}
+
 export interface State {
   people: Person[];
   meId: string;
   workstreams: Workstream[];
   commitments: Commitment[];
   tasks: Task[];
+  knowledgeLinks: KnowledgeLink[];
 }
 
 export const STATUSES: { value: Status; label: string }[] = [

@@ -171,5 +171,18 @@ export function seed(): State {
     t({ commitmentId: "c4", title: "Draft holdings schema", assigneeId: "p6", dueDate: null, status: "not_started" }),
   ];
 
-  return { people, meId: "p1", workstreams, commitments, tasks };
+  const knowledgeLinks = [
+    { id: "k1", section: "Handbook", title: "Employee handbook", url: "https://drive.google.com/drive/folders/handbook", ownerId: "p2", note: "How we work, what we expect, what you can expect. Start here." },
+    { id: "k2", section: "Handbook", title: "Team directory", url: "https://drive.google.com/drive/folders/directory", ownerId: "p2", note: "Who does what, where they sit, and how to reach them." },
+    { id: "k3", section: "Policies", title: "Expenses & travel", url: "https://drive.google.com/drive/folders/expenses", ownerId: "p2", note: "What you can spend without asking, and how to claim it back." },
+    { id: "k4", section: "Policies", title: "Leave & remote work", url: "https://drive.google.com/drive/folders/leave", ownerId: "p2", note: "Holiday, sick leave, and the rules for working from anywhere." },
+    { id: "k5", section: "Policies", title: "IT & security", url: "https://drive.google.com/drive/folders/security", ownerId: "p6", note: "Device setup, password manager, what never leaves the laptop." },
+    { id: "k6", section: "Payroll & benefits — by jurisdiction", title: "UK — payroll & benefits", url: "https://drive.google.com/drive/folders/uk-payroll", ownerId: "p1", note: "PAYE, pension, private health. UK-employed people only." },
+    { id: "k7", section: "Payroll & benefits — by jurisdiction", title: "FR — payroll & benefits", url: "https://drive.google.com/drive/folders/fr-payroll", ownerId: "p5", note: "EOR setup, mutuelle, tickets resto. France differs — read this one, not the UK one." },
+    { id: "k8", section: "Payroll & benefits — by jurisdiction", title: "DE — payroll & benefits", url: "https://drive.google.com/drive/folders/de-payroll", ownerId: "p3", note: "EOR setup, Krankenkasse, pension contributions for Berlin." },
+    { id: "k9", section: "Equity", title: "EMI options explainer", url: "https://drive.google.com/drive/folders/emi", ownerId: "p1", note: "What your options are worth, vesting, and what happens if you leave." },
+    { id: "k10", section: "Legal & entity", title: "Entity structure & key documents", url: "https://drive.google.com/drive/folders/legal", ownerId: "p4", note: "Where the company is incorporated and where the signed documents live." },
+  ];
+
+  return { people, meId: "p1", workstreams, commitments, tasks, knowledgeLinks };
 }

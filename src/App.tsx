@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Work from "./pages/Work";
 import Mine from "./pages/Mine";
 import Unowned from "./pages/Unowned";
+import Knowledge from "./pages/Knowledge";
 import CommandK from "./CommandK";
 import NewCommitment from "./NewCommitment";
 
@@ -44,6 +45,7 @@ function Shell() {
           if (e2.key === "m") navigate("/mine");
           if (e2.key === "w") navigate("/work");
           if (e2.key === "u") navigate("/unowned");
+          if (e2.key === "k") navigate("/knowledge");
           if (e2.key === "h") navigate("/");
         };
         window.addEventListener("keydown", once, { once: true });
@@ -58,6 +60,7 @@ function Shell() {
     { to: "/work", label: "Work" },
     { to: "/mine", label: "Mine" },
     { to: "/unowned", label: "Unowned" },
+    { to: "/knowledge", label: "Knowledge" },
   ];
 
   return (
@@ -115,6 +118,7 @@ function Shell() {
           <Route path="/work" element={<Work />} />
           <Route path="/mine" element={<Mine />} />
           <Route path="/unowned" element={<Unowned />} />
+          <Route path="/knowledge" element={<Knowledge />} />
         </Routes>
       </main>
 

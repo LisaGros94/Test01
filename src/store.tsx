@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { Commitment, State, Status, Task } from "./types";
+import type { Commitment, KnowledgeLink, State, Status, Task } from "./types";
 import { seed } from "./seed";
 import { todayISO, uid } from "./lib";
 import { STATUS_LABEL } from "./types";
@@ -14,6 +14,8 @@ interface Store {
   createTask: (input: { title: string; commitmentId: string; assigneeId: string | null; dueDate: string | null }) => void;
   addComment: (kind: "commitment" | "task", id: string, text: string) => void;
   bulkUpdate: (ids: string[], patch: Partial<Commitment>, log: string) => void;
+  addKnowledgeLink: (input: Omit<KnowledgeLink, "id">) => void;
+  removeKnowledgeLink: (id: string) => void;
   resetDemo: () => void;
 }
 
@@ -22,7 +24,12 @@ const Ctx = createContext<Store | null>(null);
 function load(): State {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as State;
+    if (raw) {
+      const parsed = JSON.parse(raw) as State;
+      // Migrate stores saved before the knowledge base existed
+      if (!parsed.knowledgeLinks) parsed.knowledgeLinks = seed().knowledgeLinks;
+      return parsed;
+    }
   } catch {
     /* fall through to seed */
   }
@@ -135,6 +142,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               ? { ...c, ...patch, activity: [...c.activity, stamp(log)] }
               : c
           ),
+        })),
+      addKnowledgeLink: (input) =>
+        setState((s) => ({
+          ...s,
+          knowledgeLinks: [...s.knowledgeLinks, { ...input, id: uid("k") }],
+        })),
+      removeKnowledgeLink: (id) =>
+        setState((s) => ({
+          ...s,
+          knowledgeLinks: s.knowledgeLinks.filter((k) => k.id !== id),
         })),
       resetDemo: () => {
         localStorage.removeItem(KEY);

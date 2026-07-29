@@ -64,6 +64,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Workstream health — the partner view: is each front on track, one glance */}
+      <section className="mb-16">
+        <SectionLabel>Workstreams</SectionLabel>
+        <div className="hairline-b hidden gap-6 pb-2 md:flex">
+          <span className="label flex-1 text-mid">Area</span>
+          <span className="label w-24 text-right text-mid">Open</span>
+          <span className="label w-24 text-right text-mid">Overdue</span>
+          <span className="label w-24 text-right text-mid">Blocked</span>
+          <span className="label w-32 text-right text-mid">Next due</span>
+        </div>
+        {state.workstreams
+          .filter((w) => !w.archived)
+          .map((w) => {
+            const cs = state.commitments.filter((c) => c.workstreamId === w.id && isOpen(c.status));
+            const od = cs.filter((c) => isOverdue(c)).length;
+            const blocked = cs.filter((c) => c.status === "blocked").length;
+            const next = cs
+              .map((c) => c.dueDate)
+              .filter((d): d is string => !!d && d >= today)
+              .sort()[0];
+            return (
+              <div key={w.id} className="hairline-b flex flex-wrap items-baseline gap-6 py-3">
+                <span className="min-w-0 flex-1">
+                  {w.name}
+                  <span className="label ml-4 text-mid">{personName(state, w.ownerId)}</span>
+                </span>
+                <span className="w-24 text-right">{cs.length}</span>
+                <span className={`w-24 text-right ${od ? "text-oxblood" : "text-mid"}`}>{od}</span>
+                <span className={`w-24 text-right ${blocked ? "" : "text-mid"}`}>{blocked}</span>
+                <span className="label w-32 text-right text-mid">
+                  {next ? new Date(next + "T00:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }) : "—"}
+                </span>
+              </div>
+            );
+          })}
+      </section>
+
       <div className="grid grid-cols-1 gap-x-16 gap-y-14 md:grid-cols-2">
         <section>
           <SectionLabel>
