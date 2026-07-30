@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Identity face is swappable here without touching components */
+  --font-sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+
+  --paper: #fafafa;
+  --ink: #141414;
+  --tint: #dde3e8;
+  --tint-soft: #eef1f4;
+  --mid: #8a8f94;
+  --hairline: #e3e4e6;
+  --oxblood: #6b3231; /* overdue only — nothing else may use this */
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-radius: 0;
+}
+
+::selection {
+  background: var(--tint);
+}
+
+/* Uppercase letterspaced label — the only heading style in the product */
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.label-lg {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.hairline-b {
+  border-bottom: 1px solid var(--hairline);
+}
+.hairline-t {
+  border-top: 1px solid var(--hairline);
+}
+
+.hover-tint {
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+.hover-tint:hover {
+  background: var(--tint-soft);
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--mid);
+}
+
+.fade-in {
+  animation: fade-in 150ms ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in {
+  animation: slide-in 150ms ease;
+}
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
