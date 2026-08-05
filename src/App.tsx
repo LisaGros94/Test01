@@ -11,7 +11,6 @@ import Knowledge from "./pages/Knowledge";
 import Numbers from "./pages/Numbers";
 import CommandK from "./CommandK";
 import NewCommitment from "./NewCommitment";
-import Gate from "./Gate";
 
 function Shell() {
   const { state, resetDemo } = useStore();
@@ -135,12 +134,10 @@ function Shell() {
 
 export default function App() {
   return (
-    <Gate>
-      <StoreProvider>
-        <HashRouter>
-          <Shell />
-        </HashRouter>
-      </StoreProvider>
-    </Gate>
+    <StoreProvider>
+      <HashRouter>
+        <Shell />
+      </HashRouter>
+    </StoreProvider>
   );
 }
