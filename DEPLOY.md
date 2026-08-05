@@ -42,7 +42,7 @@ Lovable builds and gives a preview URL. Hit **Publish** for the shareable link. 
 
 ### 4. Share with the team
 
-Send the URL and the password (see **Password** below).
+Send the URL. There is no login — see **Access** below.
 
 ### Working with Lovable afterwards
 
@@ -77,25 +77,21 @@ Routing uses `HashRouter`, so URLs look like `example.com/#/work`. This is delib
 
 ---
 
-## Password
+## Access
 
-The app sits behind a single shared password.
+**There is no login.** Anyone with the URL can open the app.
 
-**Current password: `blanche`**
+That is acceptable only because the app contains no real company data — the content is seeded examples, and nothing a teammate types is stored anywhere but their own browser. Treat the deployed URL as public and do not put anything confidential into it.
 
-To change it:
+If the link needs to stay private before real authentication lands, use hosting-level protection rather than anything in the app:
 
-1. Open a browser console and run, substituting the new password:
+- **Netlify:** Site settings → Access control → password protection (paid feature)
+- **Cloudflare Pages:** Cloudflare Access in front of the deployment
+- **Vercel:** Deployment Protection
 
-   ```js
-   crypto.subtle.digest("SHA-256", new TextEncoder().encode("new-password"))
-     .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("")))
-   ```
+These run at the edge, before the app loads, so they cannot be bypassed by reading the client-side JavaScript.
 
-2. Paste the resulting hash into `PASSWORD_HASH` in `src/Gate.tsx`
-3. Commit, push, redeploy
-
-**This is a speed bump, not security.** The check runs in the browser, so anyone who inspects the deployed JavaScript can bypass it. It keeps casual visitors out of a demo URL. It is not adequate for anything sensitive, and it is not a substitute for authentication. Google Workspace SSO via Supabase is what replaces it.
+Proper access control is Google Workspace SSO restricted to the company domain, which arrives with Supabase. That is what makes the app safe to hold anything real.
 
 ---
 
@@ -119,7 +115,7 @@ Keyboard: `⌘K` search · `c` create · `j`/`k` move · `x` select · `Enter` o
 Be explicit about these when sharing the link.
 
 1. **Data is per-browser.** State lives in `localStorage`. Every person sees the same seeded example content, and their edits stay on their own machine. Nothing syncs between teammates. This is a demo of the workflows, not yet a shared system of record.
-2. **The password is client-side.** See above.
+2. **There is no login.** Anyone with the URL can open it. See **Access** above.
 3. **No Slack, Drive, Calendar or Granola integrations yet.** No digests, no nudges, no meeting agenda.
 4. **Seeded content is illustrative.** Workstreams, commitments and metrics are realistic examples, not real company data. Reset from the sidebar to restore them.
 
@@ -134,7 +130,7 @@ The store in `src/store.tsx` is a single seam. Every read and write in the app g
 That work delivers, in order:
 
 1. Postgres with Row Level Security on every table, plus migrations checked into `supabase/migrations/`
-2. Google auth restricted to the company Workspace domain, which removes the shared password entirely
+2. Google auth restricted to the company Workspace domain, giving the app real access control for the first time
 3. Shared state, so assignments actually reach the person they are assigned to
 4. Edge Functions for Slack: `/hq` capture, batched daily DMs, the Monday digest
 
